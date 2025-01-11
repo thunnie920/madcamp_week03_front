@@ -142,7 +142,7 @@ function FilterSection({
 }
 
 const Wrapper = styled(motion.div)`
-  width: 20%; /* 사이드바의 고정 너비 */
+  width: 15%; /* 사이드바의 고정 너비 */
   max-width: 300px; /* 최대 너비 제한 */
   min-width: 200px; /* 최소 너비 보장 */
   flex-shrink: 0; /* 사이즈 축소 방지 */
