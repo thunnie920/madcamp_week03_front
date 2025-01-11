@@ -8,13 +8,40 @@ import SideBar from "@/src/components/SideBarComponent";
 import FirstSignUp from "@/src/components/SignUp/FirstSignUpComponent";
 import SecondSignUp from "@/src/components/SignUp/SecondSignUpComponent";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function SignUp() {
   const [currentStep, setCurrentStep] = useState<"first" | "second">("first");
+  const router = useRouter();
 
-  const handleNext = () => {
-    setCurrentStep("second");
+  const handleNext = async (formData: {
+    username: string;
+    ideal: string;
+    intro: string;
+    status: string;
+  }) => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup`, {
+        method: "PUT",  // ✅ 데이터를 수정하는 PUT 요청
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // ✅ 세션 쿠키 포함
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        alert("✅ 프로필이 성공적으로 업데이트되었습니다!");
+        setCurrentStep("second"); // ✅ 다음 단계로 이동
+      } else {
+        const errorData = await response.json();
+        alert(`❌ 오류 발생: ${errorData.message}`);
+      }
+    } catch (error) {
+      console.error("❌ 서버 오류:", error);
+    }
   };
+
 
   return (
     <Wrapper>
