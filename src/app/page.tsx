@@ -6,18 +6,22 @@ import TopBar from "@/src/components/TopBarComponent";
 import WelcomeText from "@/src/components/welcomeTextComponent";
 import SideBar from "@/src/components/SideBarComponent";
 import OthersProfile from "@/src/components/OthersProfile";
+import MyProfile from "../components/MyProfie";
+import Link from "next/link";
 
-export default function Home() {
+export default function MyPage() {
   return (
     <Wrapper>
       <TopBarWrapper>
         <TopBar />
       </TopBarWrapper>
       <ContentWrapper>
-        <WelcomeText text="카이스트에서 사랑을 찾아보세요." />
+        <WelcomeText text="여러분을 소개해보세요." />
         <MainContent>
-          <SideBar title="필터" />
-          <OthersProfile />
+          <SideBar title="프로필" />
+          <StyledLink href="/detail">
+            <OthersProfile />
+          </StyledLink>
         </MainContent>
       </ContentWrapper>
     </Wrapper>
@@ -27,6 +31,7 @@ export default function Home() {
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
+  width: 85vw;
   height: 100vh;
 `;
 
@@ -60,4 +65,13 @@ const MainContent = styled.div`
   > div:last-child {
     flex-grow: 1; /* OthersProfile은 남은 공간을 채움 */
   }
+`;
+
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: inherit;
+  cursor: pointer;
 `;

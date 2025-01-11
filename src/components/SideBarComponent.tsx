@@ -124,7 +124,7 @@ function FilterSection({
           <FilterItem
             key={item}
             onClick={() => onSelect(item)}
-            isSelected={isSelected}
+            $isSelected={isSelected}
           >
             <Image
               src={isSelected ? SelectedRadioLogo : UnselectedRadioLogo}
@@ -132,7 +132,7 @@ function FilterSection({
               width={20}
               height={20}
             />
-            <FilterText isSelected={isSelected}>{item}</FilterText>
+            <FilterText $isSelected={isSelected}>{item}</FilterText>
           </FilterItem>
         );
       })}
@@ -175,19 +175,19 @@ const FilterTitle = styled.h2`
   margin: 0 0 10px 0;
 `;
 
-const FilterItem = styled.div<{ isSelected: boolean }>`
+const FilterItem = styled.div<{ $isSelected: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 10px;
   cursor: pointer;
-  font-weight: ${({ isSelected }) => (isSelected ? "bold" : "normal")};
+  font-weight: ${({ $isSelected }) => ($isSelected ? "bold" : "normal")};
 `;
 
-const FilterText = styled.span<{ isSelected: boolean }>`
+const FilterText = styled.span<{ $isSelected: boolean }>`
   font-family: "Pretendard-Regular", sans-serif;
   font-size: 14px;
-  color: ${({ isSelected }) => (isSelected ? "#000" : "#353131")};
+  color: ${({ $isSelected }) => ($isSelected ? "#000" : "#353131")};
 `;
 
 const Divider = styled.div`

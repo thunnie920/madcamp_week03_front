@@ -10,7 +10,7 @@ import SecondSignUp from "@/src/components/SignUp/SecondSignUpComponent";
 import Question from "@/src/components/SignUp/QuestionComponent";
 import { useState } from "react";
 
-export default function SignUp() {
+export default function Edit() {
   const [currentStep, setCurrentStep] = useState("first");
 
   const handleNext = () => {

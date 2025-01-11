@@ -10,7 +10,7 @@ import SecondSignUp from "@/src/components/SignUp/SecondSignUpComponent";
 import Question from "@/src/components/SignUp/QuestionComponent";
 import { useState } from "react";
 
-export default function SignUp() {
+export default function Detail() {
   const [currentStep, setCurrentStep] = useState("first");
 
   const handleNext = () => {
@@ -28,9 +28,9 @@ export default function SignUp() {
         <TopBar />
       </TopBarWrapper>
       <ContentWrapper>
-        <WelcomeText text="여러분에 대해 알려주세요." />
+        <WelcomeText text="당신은 누구인가요?" />
         <MainContent>
-          <SideBar title="프로필 설정" />
+          <SideBar title="달리는 넙죽이님의 프로필" />
           {currentStep === "first" && (
             <AnimatedWrapper key="first" $isEntering={currentStep === "first"}>
               <FirstSignUp onNext={handleNext} />

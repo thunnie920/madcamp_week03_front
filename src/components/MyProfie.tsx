@@ -17,6 +17,29 @@ interface MyProfileProps {
 
 export default function MyProfile() {
   const [profile, setProfile] = useState<MyProfileProps | null>(null);
+  const [tooltip, setTooltip] = useState<{
+    x: number;
+    y: number;
+    content: string;
+  } | null>(null);
+
+  const handleMouseEnter = (
+    e: React.MouseEvent,
+    item: {
+      intro: string;
+      ideal: string;
+    }
+  ) => {
+    setTooltip({
+      x: e.clientX,
+      y: e.clientY,
+      content: `자기 소개: ${item.intro}\n이상형: ${item.ideal}`,
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setTooltip(null);
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -41,53 +64,121 @@ export default function MyProfile() {
   }
 
   return (
-    <Wrapper>
-      <ProfileWrapper>
-        <PhotoContainer>
-          <Image
-            src={profile.photo}
-            alt={`${profile.username}의 프로필 사진`}
-            width={200}
-            height={200}
-          />
-        </PhotoContainer>
-        <InfoContainer>
-          <UserNameContainer>
-            <UserName>{profile.username}</UserName>
-          </UserNameContainer>
-          <StatusContainer>
-            <StatusText>
-              {profile.status === "single"
-                ? "나와만 얘기해줘요"
-                : "여러 명과 얘기해도 괜찮아요"}
-            </StatusText>
-          </StatusContainer>
-          <TextContainer>
-            <Text>프로필 사진과의 유사도</Text>
-            <div style={{ gap: "3px", display: "flex" }}>
-              <Text3>{profile.similarity}</Text3>
-              <Text4>%</Text4>
-            </div>
-          </TextContainer>
-          <TextContainer>
-            <Text>자기 소개</Text>
-            <Text2>{profile.intro}</Text2>
-          </TextContainer>
-          <TextContainer>
-            <Text>이상형</Text>
-            <Text2>{profile.ideal}</Text2>
-          </TextContainer>
-          <TextContainer>
-            <Text>사람들의 별점 후기</Text>
-            <div style={{ gap: "3px", display: "flex" }}>
-              <Text4>평균 </Text4>
-              <Text3>{profile.rating}</Text3>
-              <Text4>점</Text4>
-            </div>
-          </TextContainer>
-        </InfoContainer>
-      </ProfileWrapper>
-    </Wrapper>
+    <div>
+      <Wrapper>
+        <ProfileWrapper>
+          <PhotoContainer>
+            <Image
+              src={profile.photo}
+              alt={`${profile.username}의 프로필 사진`}
+              width={200}
+              height={200}
+              onMouseEnter={(e) =>
+                handleMouseEnter(e, {
+                  intro: profile.intro,
+                  ideal: profile.ideal,
+                })
+              }
+              onMouseLeave={handleMouseLeave}
+            />
+          </PhotoContainer>
+          <InfoContainer>
+            <UserNameContainer>
+              <UserName
+                onMouseEnter={(e) =>
+                  handleMouseEnter(e, {
+                    intro: profile.intro,
+                    ideal: profile.ideal,
+                  })
+                }
+                onMouseLeave={handleMouseLeave}
+              >
+                {profile.username}
+              </UserName>
+            </UserNameContainer>
+            <StatusContainer>
+              <StatusText>
+                {profile.status === "single"
+                  ? "나와만 얘기해줘요"
+                  : "여러 명과 얘기해도 괜찮아요"}
+              </StatusText>
+            </StatusContainer>
+            <TextContainer
+              onMouseEnter={(e) =>
+                handleMouseEnter(e, {
+                  intro: profile.intro,
+                  ideal: profile.ideal,
+                })
+              }
+              onMouseLeave={handleMouseLeave}
+            >
+              <Text>프로필 사진과의 유사도</Text>
+              <div style={{ gap: "3px", display: "flex" }}>
+                <Text3>{profile.similarity}</Text3>
+                <Text4>%</Text4>
+              </div>
+            </TextContainer>
+            <TextContainer
+              onMouseEnter={(e) =>
+                handleMouseEnter(e, {
+                  intro: profile.intro,
+                  ideal: profile.ideal,
+                })
+              }
+              onMouseLeave={handleMouseLeave}
+            >
+              <Text>자기 소개</Text>
+              <Text2>{profile.intro}</Text2>
+            </TextContainer>
+            <TextContainer
+              onMouseEnter={(e) =>
+                handleMouseEnter(e, {
+                  intro: profile.intro,
+                  ideal: profile.ideal,
+                })
+              }
+              onMouseLeave={handleMouseLeave}
+            >
+              <Text>이상형</Text>
+              <Text2>{profile.ideal}</Text2>
+            </TextContainer>
+            <TextContainer
+              onMouseEnter={(e) =>
+                handleMouseEnter(e, {
+                  intro: profile.intro,
+                  ideal: profile.ideal,
+                })
+              }
+              onMouseLeave={handleMouseLeave}
+            >
+              <Text>사람들의 별점 후기</Text>
+              <div style={{ gap: "3px", display: "flex" }}>
+                <Text4>평균 </Text4>
+                <Text3>{profile.rating}</Text3>
+                <Text4>점</Text4>
+              </div>
+            </TextContainer>
+          </InfoContainer>
+        </ProfileWrapper>
+      </Wrapper>
+      {tooltip && (
+        <div
+          style={{
+            position: "absolute",
+            top: tooltip.y,
+            left: tooltip.x - 200,
+            backgroundColor: "rgba(240, 240, 240, 0.8)",
+            color: "#353131",
+            padding: "5px",
+            borderRadius: "4px",
+            pointerEvents: "none",
+            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
+          }}
+        >
+          <pre>{tooltip.content}</pre>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -104,8 +195,8 @@ const Wrapper = styled.div`
 const ProfileWrapper = styled.div`
   width: 100%; /* 부모 컨테이너의 너비를 기준으로 */
   max-width: 100%; /* 최대 너비 제한 */
-  padding: 10px 20px;
-  margin-bottom: 20px;
+  padding: 0;
+  margin-bottom: 0px;
   display: flex;
   flex-direction: row;
   align-items: flex-start;
