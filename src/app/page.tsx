@@ -1,13 +1,29 @@
 "use client";
-
+import { useEffect, useState } from "react";
 import "@/src/styles/globals.css";
 import styled from "styled-components";
 import TopBar from "@/src/components/TopBarComponent";
 import WelcomeText from "@/src/components/welcomeTextComponent";
 import SideBar from "@/src/components/SideBarComponent";
 import OthersProfile from "@/src/components/OthersProfile";
+import axios from "axios";
 
 export default function Home() {
+
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+      const fetchUser = async () => {
+          try {
+              const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/user`);
+              setUser(response.data);
+          } catch (error) {
+              console.error("로그인 상태를 불러오지 못했습니다.", error);
+          }
+      };
+      fetchUser();
+  }, []);
+  
   return (
     <Wrapper>
       <TopBarWrapper>
