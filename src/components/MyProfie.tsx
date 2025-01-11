@@ -5,7 +5,7 @@ import styled from "styled-components";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-interface OthersProfileProps {
+interface MyProfileProps {
   username: string;
   photo: string;
   status: string;
@@ -15,78 +15,78 @@ interface OthersProfileProps {
   rating: number;
 }
 
-export default function OthersProfile() {
-  const [profiles, setProfiles] = useState<OthersProfileProps[]>([]);
+export default function MyProfile() {
+  const [profile, setProfile] = useState<MyProfileProps | null>(null);
 
   useEffect(() => {
-    const fetchProfiles = async () => {
+    const fetchProfile = async () => {
       try {
         const res = await fetch("/dummy/people_data.json");
         if (!res.ok) {
-          throw new Error("Failed to fetch profiles");
+          throw new Error("Failed to fetch profile");
         }
-        const data: OthersProfileProps[] = await res.json();
-        console.log("Fetched profiles:", data); // 데이터 확인
-        setProfiles(data);
+        const data: MyProfileProps[] = await res.json();
+        console.log("Fetched profile:", data[0]); // 첫 번째 데이터 확인
+        setProfile(data[0]); // 첫 번째 요소만 설정
       } catch (error) {
-        console.error("Error fetching profiles:", error);
+        console.error("Error fetching profile:", error);
       }
     };
 
-    fetchProfiles();
+    fetchProfile();
   }, []);
 
-  if (profiles.length === 0) {
+  if (!profile) {
     return <div>Loading...</div>;
   }
 
   return (
     <Wrapper>
-      {profiles.map((profile, index) => (
-        <ProfileWrapper>
-          <PhotoContainer>
-            <Image
-              src={profile.photo}
-              alt={`${profile.username}의 프로필 사진`}
-            />
-          </PhotoContainer>
-          <InfoContainer>
-            <UserNameContainer>
-              <UserName>{profile.username}</UserName>
-            </UserNameContainer>
-            <StatusContainer>
-              <StatusText>
-                {profile.status === "single"
-                  ? "나와만 얘기해줘요"
-                  : "여러 명과 얘기해도 괜찮아요"}
-              </StatusText>
-            </StatusContainer>
-            <TextContainer>
-              <Text>프로필 사진과의 유사도</Text>
-              <div style={{ gap: "3px", display: "flex" }}>
-                <Text3>{profile.similarity}</Text3>
-                <Text4>%</Text4>
-              </div>
-            </TextContainer>
-            <TextContainer>
-              <Text>자기 소개</Text>
-              <Text2>{profile.intro}</Text2>
-            </TextContainer>
-            <TextContainer>
-              <Text>이상형</Text>
-              <Text2>{profile.ideal}</Text2>
-            </TextContainer>
-            <TextContainer>
-              <Text>사람들의 별점 후기</Text>
-              <div style={{ gap: "3px", display: "flex" }}>
-                <Text4>평균 </Text4>
-                <Text3>{profile.rating}</Text3>
-                <Text4>점</Text4>
-              </div>
-            </TextContainer>
-          </InfoContainer>
-        </ProfileWrapper>
-      ))}
+      <ProfileWrapper>
+        <PhotoContainer>
+          <Image
+            src={profile.photo}
+            alt={`${profile.username}의 프로필 사진`}
+            width={200}
+            height={200}
+          />
+        </PhotoContainer>
+        <InfoContainer>
+          <UserNameContainer>
+            <UserName>{profile.username}</UserName>
+          </UserNameContainer>
+          <StatusContainer>
+            <StatusText>
+              {profile.status === "single"
+                ? "나와만 얘기해줘요"
+                : "여러 명과 얘기해도 괜찮아요"}
+            </StatusText>
+          </StatusContainer>
+          <TextContainer>
+            <Text>프로필 사진과의 유사도</Text>
+            <div style={{ gap: "3px", display: "flex" }}>
+              <Text3>{profile.similarity}</Text3>
+              <Text4>%</Text4>
+            </div>
+          </TextContainer>
+          <TextContainer>
+            <Text>자기 소개</Text>
+            <Text2>{profile.intro}</Text2>
+          </TextContainer>
+          <TextContainer>
+            <Text>이상형</Text>
+            <Text2>{profile.ideal}</Text2>
+          </TextContainer>
+          <TextContainer>
+            <Text>사람들의 별점 후기</Text>
+            <div style={{ gap: "3px", display: "flex" }}>
+              <Text4>평균 </Text4>
+              <Text3>{profile.rating}</Text3>
+              <Text4>점</Text4>
+            </div>
+          </TextContainer>
+        </InfoContainer>
+      </ProfileWrapper>
     </Wrapper>
   );
 }
@@ -96,6 +96,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   gap: 40px;
   padding: 20px;
+  margin-top: 80px;
   width: 80%; /* 부모 요소의 전체 너비 사용 */
   box-sizing: border-box; /* 패딩 포함 크기 계산 */
 `;
