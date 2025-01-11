@@ -2,7 +2,7 @@
 import styled from "styled-components";
 import Image from "next/image";
 import LogInBtn from "@/public/images/logInBtn.png";
-import Logo from "@/public/images/logo.png";
+import Logo from "@/public/images/frontLogo.png";
 import { easeIn, easeInOut, motion } from "framer-motion";
 
 export default function LogInComponent() {
@@ -39,16 +39,19 @@ export default function LogInComponent() {
       >
         <Image src={Logo} alt="logo" />
       </LogoContainer>
-      <div onClick={kakaoLogin}>
-        <Image src={LogInBtn} alt="로그인 버튼" />
-      </div>
+      <BtnContainer>
+        <WelcomeTitle>이제는 카이스트에서 사랑하세요</WelcomeTitle>
+        <div onClick={kakaoLogin}>
+          <Image src={LogInBtn} alt="로그인 버튼" />
+        </div>
+      </BtnContainer>
     </LogInContainer>
   );
 }
 
 const LogInContainer = styled(motion.div)`
   display: flex;
-  width: 60%;
+  width: 100vw;
   height: 100vh;
   align-items: center;
   flex-direction: column;
@@ -70,12 +73,24 @@ const LogoContainer = styled(motion.div)`
   }
 `;
 
+const BtnContainer = styled(motion.div)`
+  display: flex;
+  flex-direction: column;
+  width: 80vw;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 8px;
+  img {
+    width: 100%;
+    height: 100%;
+  }
+`;
+
 const WelcomeTitle = styled.div`
-  font-family: "Spoqa Han Sans Neo", sans-serif;
-  font-size: 36px;
-  font-weight: 600;
+  font-size: 40px;
+  font-weight: 700;
   color: #302d2d;
   margin: 0;
-  text-align: center;
+  text-align: flex-start;
   width: 100%;
 `;

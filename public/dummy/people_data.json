@@ -1,0 +1,92 @@
+[
+  {
+    "username": "달리는 넙죽이",
+    "photo": "/images/people/profile_1.jpg",
+    "status": "multiple",
+    "similarity": 56,
+    "intro": "저 재밌는 사람입니다. 저 재밌는 사람입니다. 저 재밌는 사람입니다.",
+    "ideal": "딱히 없습니다. 딱히 없습니다. 딱히 없습니다. 딱히 없습니다. 딱히 없습니다.",
+    "rating": 3.7
+  },
+  {
+    "username": "질투하는 사자",
+    "photo": "/images/people/profile_2.jpg",
+    "status": "single",
+    "similarity": 52,
+    "intro": "다른 사람에게 질투를 느낄 때가 많습니다. 하지만 친근한 성격입니다.",
+    "ideal": "활발하고 재밌는 사람이 좋아요. 활발하고 재밌는 사람이 좋아요.",
+    "rating": 4.1
+  },
+  {
+    "username": "웃음많은 햇살",
+    "photo": "/images/people/profile_3.jpg",
+    "status": "single",
+    "similarity": 60,
+    "intro": "항상 밝고 웃음을 주는 사람입니다. 항상 밝고 웃음을 주는 사람입니다.",
+    "ideal": "저를 웃게 해줄 수 있는 사람이 좋아요. 저를 웃게 해줄 수 있는 사람이 좋아요.",
+    "rating": 4.5
+  },
+  {
+    "username": "공부하는 올빼미",
+    "photo": "/images/people/profile_4.jpg",
+    "status": "single",
+    "similarity": 49,
+    "intro": "밤에 집중력이 가장 좋은 사람입니다. 밤에 집중력이 가장 좋은 사람입니다.",
+    "ideal": "같이 공부하고 성장할 수 있는 사람이 이상형입니다. 같이 공부하고 성장할 수 있는 사람이 이상형입니다.",
+    "rating": 4.0
+  },
+  {
+    "username": "행복한 강아지",
+    "photo": "/images/people/profile_5.jpg",
+    "status": "multiple",
+    "similarity": 58,
+    "intro": "사람들을 좋아하고 활발한 성격입니다. 사람들을 좋아하고 활발한 성격입니다.",
+    "ideal": "친근하고 따뜻한 사람이 좋아요. 친근하고 따뜻한 사람이 좋아요.",
+    "rating": 4.6
+  },
+  {
+    "username": "조용한 바람",
+    "photo": "/images/people/profile_6.jpg",
+    "status": "single",
+    "similarity": 55,
+    "intro": "조용하지만 필요한 말을 할 줄 아는 사람입니다. 조용하지만 필요한 말을 할 줄 아는 사람입니다.",
+    "ideal": "나를 이해해 줄 수 있는 사람이 좋습니다. 나를 이해해 줄 수 있는 사람이 좋습니다.",
+    "rating": 3.9
+  },
+  {
+    "username": "꿈꾸는 고양이",
+    "photo": "/images/people/profile_7.jpg",
+    "status": "multiple",
+    "similarity": 57,
+    "intro": "항상 새로운 꿈과 목표를 세우며 노력합니다. 항상 새로운 꿈과 목표를 세우며 노력합니다.",
+    "ideal": "같이 꿈을 이루어갈 수 있는 사람이 좋아요. 같이 꿈을 이루어갈 수 있는 사람이 좋아요.",
+    "rating": 4.2
+  },
+  {
+    "username": "달콤한 초콜릿",
+    "photo": "/images/people/profile_8.jpg",
+    "status": "single",
+    "similarity": 54,
+    "intro": "항상 사람들에게 달콤한 미소를 선물합니다. 항상 사람들에게 달콤한 미소를 선물합니다.",
+    "ideal": "다정한 성격의 사람이 이상형입니다. 다정한 성격의 사람이 이상형입니다.",
+    "rating": 4.4
+  },
+  {
+    "username": "차분한 호수",
+    "photo": "/images/people/profile_9.jpg",
+    "status": "multiple",
+    "similarity": 22,
+    "intro": "항상 차분하게 주변을 살피는 사람입니다. 항상 차분하게 주변을 살피는 사람입니다.",
+    "ideal": "차분하고 믿음직한 사람이 좋아요. 차분하고 믿음직한 사람이 좋아요.",
+    "rating": 2.3
+  },
+  {
+    "username": "빛나는 별",
+    "photo": "/images/people/profile_10.jpg",
+    "status": "single",
+    "similarity": 29,
+    "intro": "어디서나 빛나는 존재감을 가진 사람입니다. 어디서나 빛나는 존재감을 가진 사람입니다.",
+    "ideal": "저와 함께 빛날 수 있는 사람이 좋아요. 저와 함께 빛날 수 있는 사람이 좋아요.",
+    "rating": 1.4
+  }
+]
