@@ -17,20 +17,26 @@ interface MyProfileProps {
 
 export default function MyProfile() {
   const [profile, setProfile] = useState<MyProfileProps | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch("/dummy/people_data.json");
-        if (!res.ok) {
-          throw new Error("Failed to fetch profile");
-        }
-        const data: MyProfileProps[] = await res.json();
-        console.log("Fetched profile:", data[0]); // 첫 번째 데이터 확인
-        setProfile(data[0]); // 첫 번째 요소만 설정
-      } catch (error) {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/userprofile`, {
+          credentials: 'include'
+        });
+        if (!res.ok) throw new Error("Failed to fetch profile");
+        
+        // ✅ 백엔드에서 단일 객체를 반환하므로 배열이 아닌 객체로 사용
+        const data: MyProfileProps = await res.json();
+        setProfile(data);  // ✅ 전체 객체를 바로 사용
+    } catch (error) {
         console.error("Error fetching profile:", error);
-      }
+    } finally {
+        setLoading(false);
+    }
+
     };
 
     fetchProfile();
