@@ -30,7 +30,7 @@ export default function TopBar() {
 
   return (
     <Wrapper
-      initial={isHome ? { opacity: 1, y: 0 } : { opacity: 0, y: -90 }}
+      initial={isHome ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
       animate={navControls}
     >
       <LogoContainer>
@@ -45,7 +45,9 @@ export default function TopBar() {
       <Flex $gap={20} $align="center">
         <NavItem>튜토리얼</NavItem>
         <NavItem>나의 채팅방</NavItem>
-        <NavItem>마이 페이지</NavItem>
+        <StyledLink href="/mypage">
+          <NavItem>마이 페이지</NavItem>
+        </StyledLink>
         <div style={{ width: "30px" }}></div>
       </Flex>
     </Wrapper>
@@ -98,6 +100,12 @@ const TitleContainer = styled.div`
   flex-direction: row; /* 텍스트를 한 줄로 정렬 */
   align-items: baseline; /* 기준선 정렬 */
   gap: 4px; /* 글자 간 간격 */
+  cursor: pointer; /* 클릭 가능 표시 */
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #ffe0e0; /* 모든 자식 요소의 색상 변경 */
+  }
 `;
 
 const Title = styled.h2`
@@ -105,27 +113,14 @@ const Title = styled.h2`
   font-size: 24px;
   color: #ff5a5a;
   margin: 0;
-  cursor: pointer;
   justify-content: center;
-  transition: color 0.3s ease;
-
-  &:hover {
-    color: #ffe0e0;
-  }
 `;
 
 const Title2 = styled.h2`
-  font-family: "Pretendard-Black", sans-serif;
+  font-family: "Pretendard-Bold", sans-serif;
   font-size: 24px;
   color: #ff5a5a;
   margin: 0;
-  cursor: pointer;
-  justify-content: center;
-  transition: color 0.3s ease;
-
-  &:hover {
-    color: #ffe0e0;
-  }
 `;
 
 const NavItem = styled.h4`

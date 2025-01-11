@@ -5,19 +5,20 @@ import styled from "styled-components";
 import TopBar from "@/src/components/TopBarComponent";
 import WelcomeText from "@/src/components/welcomeTextComponent";
 import SideBar from "@/src/components/SideBarComponent";
-import OthersProfile from "@/src/components/OthersProfile";
+import MyProfile from "@/src/components/MyProfie";
 
-export default function Home() {
+export default function MyPage() {
   return (
     <Wrapper>
+      <Spacer />
       <TopBarWrapper>
         <TopBar />
       </TopBarWrapper>
       <ContentWrapper>
-        <WelcomeText text="카이스트에서 사랑을 찾아보세요." />
+        <WelcomeText text="여러분을 소개해보세요." />
         <MainContent>
-          <SideBar title="필터" />
-          <OthersProfile />
+          <SideBar title="프로필" />
+          <MyProfile />
         </MainContent>
       </ContentWrapper>
     </Wrapper>
@@ -28,6 +29,10 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
+`;
+
+const Spacer = styled.div`
+  height: 20px; /* Y축 위치 조정을 위한 여백 */
 `;
 
 const TopBarWrapper = styled.div`

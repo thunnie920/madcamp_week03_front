@@ -4,8 +4,13 @@ import { motion, useAnimation } from "framer-motion";
 import styled from "styled-components";
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import UnselectedRadioLogo from "@/public/images/unselectedRadio.png";
 import SelectedRadioLogo from "@/public/images/selectedRadio.png";
+
+type SideBarProps = {
+  title: string;
+};
 
 const filterData = {
   성격: [
@@ -43,7 +48,8 @@ const filterData = {
   ],
 };
 
-export default function SideBar() {
+export default function SideBar({ title }: SideBarProps) {
+  const pathname = usePathname();
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
 
   const handleSelection = (item: string) => {
@@ -57,30 +63,39 @@ export default function SideBar() {
   const navControls = useAnimation();
 
   const navigationAnimation = useCallback(async () => {
-    await navControls.start({
-      x: 0,
-      opacity: 1,
-      transition: { duration: 1.2, ease: "easeInOut" },
-    });
-  }, [navControls]);
+    if (pathname === "/") {
+      await navControls.start({
+        x: 0,
+        opacity: 1,
+        transition: { duration: 1.2, ease: "easeInOut" },
+      });
+    }
+  }, [navControls, pathname]);
 
   useEffect(() => {
     navigationAnimation();
   }, [navigationAnimation]);
 
   return (
-    <Wrapper animate={navControls}>
-      <Title>필터</Title>
-      {filterEntries.map(([category, items], index) => (
-        <FilterSection
-          key={category}
-          title={category}
-          items={items}
-          selectedFilters={selectedFilters}
-          onSelect={handleSelection}
-          showDivider={index !== filterEntries.length - 1}
-        />
-      ))}
+    <Wrapper
+      initial={
+        pathname === "/" ? { x: -300, opacity: 0 } : { x: 0, opacity: 1 }
+      }
+      animate={pathname === "/" ? navControls : undefined}
+    >
+      <Title>{title}</Title>
+      {pathname === "/"
+        ? filterEntries.map(([category, items], index) => (
+            <FilterSection
+              key={category}
+              title={category}
+              items={items}
+              selectedFilters={selectedFilters}
+              onSelect={handleSelection}
+              showDivider={index !== filterEntries.length - 1}
+            />
+          ))
+        : null}
     </Wrapper>
   );
 }
@@ -126,9 +141,7 @@ function FilterSection({
   );
 }
 
-const Wrapper = styled(motion.div).attrs(() => ({
-  initial: { x: -300, opacity: 0 },
-}))`
+const Wrapper = styled(motion.div)`
   width: 20%; /* 사이드바의 고정 너비 */
   max-width: 300px; /* 최대 너비 제한 */
   min-width: 200px; /* 최소 너비 보장 */
