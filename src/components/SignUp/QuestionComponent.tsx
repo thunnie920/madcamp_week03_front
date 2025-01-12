@@ -168,6 +168,8 @@ const QuestionTitle = styled.h1`
 const ButtonGroup = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center; /* 버튼을 중앙에 정렬 */
   gap: 20px;
 `;
 
@@ -177,6 +179,9 @@ const OptionButton = styled.button<{ $isSelected: boolean }>`
   border-radius: 8px;
   background-color: ${(props) => (props.$isSelected ? "#ffe6e9" : "#f5f5f5")};
   cursor: pointer;
+  justify-content: center;
+  width: 60%;
+  text-align: center; /* 텍스트 중앙 정렬 */
 
   &:hover {
     background-color: #ffe6e9;

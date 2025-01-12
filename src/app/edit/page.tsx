@@ -30,7 +30,7 @@ export default function Edit() {
       <ContentWrapper>
         <WelcomeText text="여러분에 대해 알려주세요." />
         <MainContent>
-          <SideBar title="프로필 설정" />
+          <SideBar title="프로필 수정" />
           {currentStep === "first" && (
             <AnimatedWrapper key="first" $isEntering={currentStep === "first"}>
               <FirstSignUp onNext={handleNext} />

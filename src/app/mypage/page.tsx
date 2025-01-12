@@ -30,6 +30,7 @@ export default function MyPage() {
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
+  width: 80vw;
   height: 100vh;
 `;
 

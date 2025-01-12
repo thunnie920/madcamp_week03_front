@@ -17,28 +17,52 @@ interface MyProfileProps {
 
 export default function MyProfile() {
   const [profile, setProfile] = useState<MyProfileProps | null>(null);
-  const [tooltip, setTooltip] = useState<{
+  const [tooltip1, setTooltip1] = useState<{
     x: number;
     y: number;
     content: string;
   } | null>(null);
 
-  const handleMouseEnter = (
+  const [tooltip2, setTooltip2] = useState<{
+    x: number;
+    y: number;
+    content: string;
+  } | null>(null);
+
+  const handleMouseEnter1 = (
     e: React.MouseEvent,
     item: {
       intro: string;
       ideal: string;
     }
   ) => {
-    setTooltip({
+    setTooltip1({
       x: e.clientX,
       y: e.clientY,
-      content: `자기 소개: ${item.intro}\n이상형: ${item.ideal}`,
+      content: `자기 소개: ${item.intro}`,
     });
   };
 
-  const handleMouseLeave = () => {
-    setTooltip(null);
+  const handleMouseEnter2 = (
+    e: React.MouseEvent,
+    item: {
+      intro: string;
+      ideal: string;
+    }
+  ) => {
+    setTooltip2({
+      x: e.clientX,
+      y: e.clientY,
+      content: `이상형: ${item.ideal}`,
+    });
+  };
+
+  const handleMouseLeave1 = () => {
+    setTooltip1(null);
+  };
+
+  const handleMouseLeave2 = () => {
+    setTooltip2(null);
   };
 
   useEffect(() => {
@@ -73,28 +97,11 @@ export default function MyProfile() {
               alt={`${profile.username}의 프로필 사진`}
               width={200}
               height={200}
-              onMouseEnter={(e) =>
-                handleMouseEnter(e, {
-                  intro: profile.intro,
-                  ideal: profile.ideal,
-                })
-              }
-              onMouseLeave={handleMouseLeave}
             />
           </PhotoContainer>
           <InfoContainer>
             <UserNameContainer>
-              <UserName
-                onMouseEnter={(e) =>
-                  handleMouseEnter(e, {
-                    intro: profile.intro,
-                    ideal: profile.ideal,
-                  })
-                }
-                onMouseLeave={handleMouseLeave}
-              >
-                {profile.username}
-              </UserName>
+              <UserName>{profile.username}</UserName>
             </UserNameContainer>
             <StatusContainer>
               <StatusText>
@@ -103,54 +110,42 @@ export default function MyProfile() {
                   : "여러 명과 얘기해도 괜찮아요"}
               </StatusText>
             </StatusContainer>
-            <TextContainer
-              onMouseEnter={(e) =>
-                handleMouseEnter(e, {
-                  intro: profile.intro,
-                  ideal: profile.ideal,
-                })
-              }
-              onMouseLeave={handleMouseLeave}
-            >
+            <TextContainer>
               <Text>프로필 사진과의 유사도</Text>
               <div style={{ gap: "3px", display: "flex" }}>
                 <Text3>{profile.similarity}</Text3>
                 <Text4>%</Text4>
               </div>
             </TextContainer>
-            <TextContainer
-              onMouseEnter={(e) =>
-                handleMouseEnter(e, {
-                  intro: profile.intro,
-                  ideal: profile.ideal,
-                })
-              }
-              onMouseLeave={handleMouseLeave}
-            >
+            <TextContainer>
               <Text>자기 소개</Text>
-              <Text2>{profile.intro}</Text2>
+              <Text2
+                onMouseEnter={(e) =>
+                  handleMouseEnter1(e, {
+                    intro: profile.intro,
+                    ideal: profile.ideal,
+                  })
+                }
+                onMouseLeave={handleMouseLeave1}
+              >
+                {profile.intro}
+              </Text2>
             </TextContainer>
-            <TextContainer
-              onMouseEnter={(e) =>
-                handleMouseEnter(e, {
-                  intro: profile.intro,
-                  ideal: profile.ideal,
-                })
-              }
-              onMouseLeave={handleMouseLeave}
-            >
+            <TextContainer>
               <Text>이상형</Text>
-              <Text2>{profile.ideal}</Text2>
+              <Text2
+                onMouseEnter={(e) =>
+                  handleMouseEnter2(e, {
+                    intro: profile.intro,
+                    ideal: profile.ideal,
+                  })
+                }
+                onMouseLeave={handleMouseLeave2}
+              >
+                {profile.ideal}
+              </Text2>
             </TextContainer>
-            <TextContainer
-              onMouseEnter={(e) =>
-                handleMouseEnter(e, {
-                  intro: profile.intro,
-                  ideal: profile.ideal,
-                })
-              }
-              onMouseLeave={handleMouseLeave}
-            >
+            <TextContainer>
               <Text>사람들의 별점 후기</Text>
               <div style={{ gap: "3px", display: "flex" }}>
                 <Text4>평균 </Text4>
@@ -161,12 +156,12 @@ export default function MyProfile() {
           </InfoContainer>
         </ProfileWrapper>
       </Wrapper>
-      {tooltip && (
+      {tooltip1 && (
         <div
           style={{
             position: "absolute",
-            top: tooltip.y,
-            left: tooltip.x - 200,
+            top: tooltip1.y,
+            left: tooltip1.x - 200,
             backgroundColor: "rgba(240, 240, 240, 0.8)",
             color: "#353131",
             padding: "5px",
@@ -175,7 +170,24 @@ export default function MyProfile() {
             boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
           }}
         >
-          <pre>{tooltip.content}</pre>
+          <pre>{tooltip1.content}</pre>
+        </div>
+      )}
+      {tooltip2 && (
+        <div
+          style={{
+            position: "absolute",
+            top: tooltip2.y,
+            left: tooltip2.x - 200,
+            backgroundColor: "rgba(240, 240, 240, 0.8)",
+            color: "#353131",
+            padding: "5px",
+            borderRadius: "4px",
+            pointerEvents: "none",
+            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
+          }}
+        >
+          <pre>{tooltip2.content}</pre>
         </div>
       )}
     </div>
@@ -286,7 +298,7 @@ const Text = styled.h2`
 `;
 
 const Text2 = styled.h2`
-  font-family: "Pretendard-Medium", sans-serif;
+  font-family: "Pretendard-Regular", sans-serif;
   font-size: 20px;
   color: #353131;
   margin: 0;
@@ -298,12 +310,12 @@ const Text2 = styled.h2`
 `;
 
 const Text3 = styled.h3`
-  font-family: "Pretendard-Bold", sans-serif;
+  font-family: "Pretendard-SemiBold", sans-serif;
   font-size: 20px;
   color: #ff5a5a;
 `;
 const Text4 = styled.h3`
-  font-family: "Pretendard-Medium", sans-serif;
+  font-family: "Pretendard-Regular", sans-serif;
   font-size: 20px;
   color: #353131;
   margin: 0;
