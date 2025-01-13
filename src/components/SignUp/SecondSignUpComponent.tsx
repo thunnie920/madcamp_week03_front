@@ -12,6 +12,8 @@ export default function SecondSignUp({ onNext }: SecondSignUpProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isCameraActive, setIsCameraActive] = useState<boolean>(true); // 카메라 활성 상태 관리
   const [isPhotoCaptured, setIsPhotoCaptured] = useState<boolean>(false); // 사진이 찍혔는지 상태 관리
+  const [capturedImage, setCapturedImage] = useState<string | null>(null); 
+  const [similarityScore, setSimilarityScore] = useState<number | null>(null); 
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -22,9 +24,10 @@ export default function SecondSignUp({ onNext }: SecondSignUpProps) {
     }
   };
 
-  const handlePhotoCaptured = () => {
+  const handlePhotoCaptured = (imageData: string) => {
     setIsPhotoCaptured(true); // 카메라에서 사진 촬영 완료 상태로 설정
     setIsCameraActive(false); // 카메라 비활성화
+    setCapturedImage(imageData);
   };
 
   const isNextEnabled = isPhotoCaptured; // 사진이 업로드되거나 캡처되었을 때만 활성화
@@ -32,6 +35,39 @@ export default function SecondSignUp({ onNext }: SecondSignUpProps) {
   const handleNextButtonClick = () => {
     if (isNextEnabled) {
       onNext(); // 다음 단계로 이동
+    }
+  };
+
+    // ✅ 업로드 및 캡처 사진 비교 함수 (서버로 전송)
+  const handleCompareImages = async () => {
+    if (!selectedImage || !capturedImage) {
+      alert("사진을 모두 업로드하거나 촬영해 주세요.");
+      return;
+    }
+
+    const formData = new FormData();
+    const uploadedBlob = await fetch(selectedImage).then(res => res.blob());
+    const capturedBlob = await fetch(capturedImage).then(res => res.blob());
+    formData.append("images", uploadedBlob, "uploaded.jpg");
+    formData.append("images", capturedBlob, "captured.jpg");
+    try {
+        const response = await fetch("http://localhost:5000/api/compare-faces", {
+            method: "POST",
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("서버 오류:", errorData);
+            alert(`서버 오류 발생: ${errorData.error}`);
+            return;
+        }
+
+        const result = await response.json();
+        alert(`유사도 점수: ${result.score}`);
+    } catch (error) {
+        console.error("클라이언트 오류:", error);
+        alert("이미지 비교 중 오류가 발생했습니다.");
     }
   };
 
@@ -62,9 +98,16 @@ export default function SecondSignUp({ onNext }: SecondSignUpProps) {
           {/* 카메라 활성 상태에 따라 렌더링 */}
         </CameraWrapper>
       </ContentWrapper>
-      <ButtonContainer>
+      {/* <ButtonContainer>
         <NextButton onClick={handleNextButtonClick} disabled={!isNextEnabled}>
           사진 업로드 하기
+        </NextButton>
+      </ButtonContainer> */}
+
+      {/* ✅ 사진 비교 버튼 --> 나중에 삭제해야됨 */}
+      <ButtonContainer>
+        <NextButton onClick={handleCompareImages} disabled={!isPhotoCaptured}>
+          사진 유사도 비교
         </NextButton>
       </ButtonContainer>
     </Wrapper>
