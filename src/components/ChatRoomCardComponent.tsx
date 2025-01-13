@@ -9,6 +9,7 @@ interface ChatRoomCardProps {
   photo: string;
   id: number;
   status: string;
+  lastchatdate: number;
   onClick?: () => void;
 }
 
@@ -17,6 +18,7 @@ export default function ChatRoomCard({
   photo,
   id,
   status,
+  lastchatdate,
   onClick,
 }: ChatRoomCardProps) {
   return (
@@ -33,7 +35,7 @@ export default function ChatRoomCard({
       <BottomContainer>
         <TextContainer2>
           <Text2>마지막 대화 </Text2>
-          <Date>34</Date>
+          <Date>{lastchatdate}</Date>
           <Text2> 일 전 </Text2>
         </TextContainer2>
         <div
@@ -44,8 +46,8 @@ export default function ChatRoomCard({
             background: "rgba(255, 255, 255, 0.65)",
           }}
         >
-          <StatusContainer>
-            <StatusText>
+          <StatusContainer status={status}>
+            <StatusText status={status}>
               {status === "red"
                 ? "레드라이트"
                 : status === "green"
@@ -161,7 +163,7 @@ const BottomContainer = styled.div`
   background-color: rgba(255, 255, 255, 0.65);
 `;
 
-const StatusContainer = styled.div`
+const StatusContainer = styled.div<{ status: string }>`
   display: flex;
   width: flex;
   justify-content: center;
@@ -169,16 +171,24 @@ const StatusContainer = styled.div`
   align-items: center;
   gap: 10px;
   padding: 5px;
-  margin 3px;
+  margin: 3px;
   border-radius: 100px;
-  border: 1px solid #ff5a5a;
-  background-color: #fff9f9;
+  border: 1px solid
+    ${({ status }) =>
+      status === "red"
+        ? "#ff5a5a"
+        : status === "green"
+        ? "#86ff5a"
+        : "#ffe35a"};
+  background-color: ${({ status }) =>
+    status === "red" ? "#fff0f0" : status === "green" ? "#f0fff0" : "#f9f9f9"};
 `;
 
-const StatusText = styled.h2`
+const StatusText = styled.h2<{ status: string }>`
   font-family: "Pretendard-Medium", sans-serif;
   font-size: 12px;
   color: #353131;
   margin: 0;
-  background-color: #fff9f9;
+  background-color: ${({ status }) =>
+    status === "red" ? "#fff0f0" : status === "green" ? "#f0fff0" : "#f9f9f9"};
 `;

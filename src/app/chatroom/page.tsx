@@ -14,6 +14,7 @@ interface ChatRoomProps {
   photo: string;
   id: number;
   status: string;
+  lastchatdate: number;
 }
 
 export default function ChatRoom() {
@@ -79,6 +80,7 @@ export default function ChatRoom() {
                   photo={profile.photo}
                   id={profile.id}
                   status={profile.status}
+                  lastchatdate={profile.lastchatdate}
                   onClick={() => handleCardClick(profile.id)}
                 />
                 {hoverPosition && (
