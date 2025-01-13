@@ -10,19 +10,9 @@ export default function LogInComponent() {
     console.log("카카오 로그인 버튼 클릭됨!");
     alert("카카오 로그인 버튼 클릭됨!");
 
-    // backend 서버로 인가 코드를 요청한다. -> api 키와 리다이렉트 uri를 포함하여 보낸다.
+    // 카카오 로그인 페이지로 리다이렉트
     window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_REDIRECT_URI}&response_type=code`;
-
   };
-  /*const kakaoLogin = () => {
-    window.location.href = "http://localhost:4000/auth/kakao"; // 백엔드 로그인 경로
-  };*/
-
-  /*
-  const kakaoLogin = async () => {
-	window.location.href = process.env.NEXT_PUBLIC_API_URL + "/auth/kakao";
-  };
-  */
 
   return (
     <LogInContainer
@@ -33,7 +23,7 @@ export default function LogInComponent() {
       <LogoContainer
         initial={{
           opacity: 0,
-          y: +90,
+          y: 90,
         }}
         animate={{
           opacity: 1,
@@ -41,13 +31,13 @@ export default function LogInComponent() {
         }}
         transition={{ duration: 1.2, ease: easeInOut }}
       >
-        <Image src={Logo} alt="logo" />
+        <Image src={Logo} alt="로고" />
       </LogoContainer>
       <BtnContainer>
         <WelcomeTitle>이제는 카이스트에서 사랑하세요</WelcomeTitle>
-        <div onClick={kakaoLogin}>
-          <Image src={LogInBtn} alt="로그인 버튼" />
-        </div>
+        <LoginButton onClick={kakaoLogin}>
+          <Image src={LogInBtn} alt="카카오 로그인 버튼" />
+        </LoginButton>
       </BtnContainer>
     </LogInContainer>
   );
@@ -55,11 +45,11 @@ export default function LogInComponent() {
 
 const LogInContainer = styled(motion.div)`
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   width: 100vw;
   height: 100vh;
-  align-items: center;
-  flex-direction: column;
-  justify-content: center;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -71,9 +61,10 @@ const LogoContainer = styled(motion.div)`
   display: flex;
   align-items: center;
   gap: 8px;
+
   img {
     width: 100%;
-    height: 100%;
+    height: auto;
   }
 `;
 
@@ -81,13 +72,8 @@ const BtnContainer = styled(motion.div)`
   display: flex;
   flex-direction: column;
   width: 80vw;
-  justify-content: flex-start;
   align-items: flex-start;
   gap: 8px;
-  img {
-    width: 100%;
-    height: 100%;
-  }
 `;
 
 const WelcomeTitle = styled.div`
@@ -95,6 +81,15 @@ const WelcomeTitle = styled.div`
   font-weight: 700;
   color: #302d2d;
   margin: 0;
-  text-align: flex-start;
+  text-align: left;
   width: 100%;
+`;
+
+const LoginButton = styled.div`
+  cursor: pointer;
+
+  img {
+    width: 100%;
+    height: auto;
+  }
 `;

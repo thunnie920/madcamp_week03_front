@@ -4,31 +4,29 @@ import { motion } from "framer-motion";
 import styled from "styled-components";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import selectedStar from "@/public/images/selectedStar.png";
+import unselectedStar from "@/public/images/unselectedStar.png";
 
-interface OthersProfileProps {
+interface OthersReviewProps {
   username: string;
   photo: string;
-  status: string;
-  similarity: number;
-  intro: string;
-  ideal: string;
   rating: number;
-  onClick?: () => void; // onClick 핸들러는 선택적
+  period: number;
+  review: string;
 }
 
-export default function OthersProfile({
+export default function OthersReview({
   username,
   photo,
-  status,
-  similarity,
-  intro,
-  ideal,
   rating,
-  onClick,
-}: OthersProfileProps) {
+  period,
+  review,
+}: OthersReviewProps) {
+  console.log("Received username:", username); // 디버깅용
+
   return (
     <div>
-      <Wrapper onClick={onClick}>
+      <Wrapper>
         <PhotoContainer>
           <Image
             src={photo}
@@ -39,37 +37,29 @@ export default function OthersProfile({
         </PhotoContainer>
         <InfoContainer>
           <UserNameContainer>
-            <UserName>{username}</UserName>
+            <UserName>{username || "Unknown User"}</UserName>
           </UserNameContainer>
-          <StatusContainer>
-            <StatusText>
-              {status === "single"
-                ? "나와만 얘기해줘요"
-                : "여러 명과 얘기해도 괜찮아요"}
-            </StatusText>
-          </StatusContainer>
+          <StarContainer>
+            {Array.from({ length: 5 }).map((_, index) => (
+              <Image
+                key={index}
+                src={index < rating ? selectedStar : unselectedStar}
+                alt={index < rating ? "선택된 별" : "선택되지 않은 별"}
+                width={20}
+                height={20}
+              />
+            ))}
+          </StarContainer>
           <TextContainer>
-            <Text>프로필 사진과의 유사도</Text>
+            <Text>대화기간</Text>
             <div style={{ gap: "3px", display: "flex" }}>
-              <Text3>{similarity}</Text3>
-              <Text4>%</Text4>
+              <Text3>{period}</Text3>
+              <Text4>일</Text4>
             </div>
           </TextContainer>
           <TextContainer>
-            <Text>자기 소개</Text>
-            <Text2>{intro}</Text2>
-          </TextContainer>
-          <TextContainer>
-            <Text>이상형</Text>
-            <Text2>{ideal}</Text2>
-          </TextContainer>
-          <TextContainer>
-            <Text>사람들의 별점 후기</Text>
-            <div style={{ gap: "3px", display: "flex" }}>
-              <Text4>평균 </Text4>
-              <Text3>{rating}</Text3>
-              <Text4>점</Text4>
-            </div>
+            <Text>평가</Text>
+            <Text2>{review}</Text2>
           </TextContainer>
         </InfoContainer>
       </Wrapper>
@@ -113,10 +103,9 @@ const InfoContainer = styled.div`
   width: 100%;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 14px;
   overflow: hidden;
-  justify-content: space-between; /* 요소 간 간격 균등 배치 */
   flex-grow: 1;
   min-width: 0;
 `;
@@ -135,24 +124,10 @@ const UserName = styled.h1`
   margin: 0;
 `;
 
-const StatusContainer = styled.div`
+const StarContainer = styled.div`
   display: flex;
-  width: flex;
-  justify-content: center;
   flex-direction: row;
-  align-items: center;
-  gap: 10px;
-  padding: 5px;
-  border-radius: 100px;
-  border: 1px solid #ff5a5a;
-  background-color: #f5f5f5;
-`;
-
-const StatusText = styled.h2`
-  font-family: "Pretendard-Medium", sans-serif;
-  font-size: 14px;
-  color: #353131;
-  margin: 0;
+  gap: 5px;
 `;
 
 const TextContainer = styled.div`
