@@ -76,16 +76,7 @@ export default function MyPage() {
             onMouseLeave={handleMouseLeave}
             style={{ border: "1px solid purple", width: "100px" }}
           >
-            <MyProfile
-              username={profile.username}
-              photo={profile.photo}
-              status={profile.status}
-              similarity={profile.similarity}
-              intro={profile.intro}
-              ideal={profile.ideal}
-              rating={profile.rating}
-              onClick={handleProfileClick}
-            />
+            <MyProfile />
             {hoverPosition && (
               <HoverText
                 style={{

@@ -9,6 +9,9 @@ export default function LogInComponent() {
   const kakaoLogin = () => {
     console.log("카카오 로그인 버튼 클릭됨!");
     alert("카카오 로그인 버튼 클릭됨!");
+
+    // backend 서버로 인가 코드를 요청한다. -> api 키와 리다이렉트 uri를 포함하여 보낸다.
+    window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_REDIRECT_URI}&response_type=code`;
   };
   /*const kakaoLogin = () => {
     window.location.href = "http://localhost:4000/auth/kakao"; // 백엔드 로그인 경로

@@ -17,34 +17,57 @@ interface MyProfileProps {
   onClick?: () => void;
 }
 
-export default function MyProfile({
-  username,
-  photo,
-  status,
-  similarity,
-  intro,
-  ideal,
-  rating,
-  onClick,
-}: MyProfileProps) {
+export default function MyProfile() {
+  const [profile, setProfile] = useState<MyProfileProps | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/userprofile`,
+          {
+            credentials: "include",
+          }
+        );
+        if (!res.ok) throw new Error("Failed to fetch profile");
+
+        // ✅ 백엔드에서 단일 객체를 반환하므로 배열이 아닌 객체로 사용
+        const data: MyProfileProps = await res.json();
+        setProfile(data); // ✅ 전체 객체를 바로 사용
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  if (!profile) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <Wrapper>
-      <ProfileWrapper onClick={onClick}>
+      <ProfileWrapper>
         <PhotoContainer>
           <Image
-            src={photo}
-            alt={`${username}의 프로필 사진`}
+            src={profile.photo}
+            alt={`${profile.username}의 프로필 사진`}
             width={200}
             height={200}
           />
         </PhotoContainer>
         <InfoContainer>
           <UserNameContainer>
-            <UserName>{username}</UserName>
+            <UserName>{profile.username}</UserName>
           </UserNameContainer>
           <StatusContainer>
             <StatusText>
-              {status === "single"
+              {profile.status === "single"
                 ? "나와만 얘기해줘요"
                 : "여러 명과 얘기해도 괜찮아요"}
             </StatusText>
@@ -52,23 +75,23 @@ export default function MyProfile({
           <TextContainer>
             <Text>프로필 사진과의 유사도</Text>
             <div style={{ gap: "3px", display: "flex" }}>
-              <Text3>{similarity}</Text3>
+              <Text3>{profile.similarity}</Text3>
               <Text4>%</Text4>
             </div>
           </TextContainer>
           <TextContainer>
             <Text>자기 소개</Text>
-            <Text2>{intro}</Text2>
+            <Text2>{profile.intro}</Text2>
           </TextContainer>
           <TextContainer>
             <Text>이상형</Text>
-            <Text2>{ideal}</Text2>
+            <Text2>{profile.ideal}</Text2>
           </TextContainer>
           <TextContainer>
             <Text>사람들의 별점 후기</Text>
             <div style={{ gap: "3px", display: "flex" }}>
               <Text4>평균 </Text4>
-              <Text3>{rating}</Text3>
+              <Text3>{profile.rating}</Text3>
               <Text4>점</Text4>
             </div>
           </TextContainer>
