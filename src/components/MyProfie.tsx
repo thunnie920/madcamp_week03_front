@@ -186,27 +186,35 @@ const TextContainer = styled.div`
 `;
 
 const Text = styled.h2`
+  font-family: "Pretendard-SemiBold", sans-serif;
+  font-size: 20px;
+  color: #353131;
+  margin: 0;
+  min-width: 200px;
+  text-align: left;
+`;
+
+const Text2 = styled.h2`
+  font-family: "Pretendard-Regular", sans-serif;
+  font-size: 18px;
+  color: #353131;
+  margin: 0;
+  white-space: normal; /* 여러 줄 허용 */
+  word-break: break-word; /* 단어가 너무 길 경우 줄바꿈 */
+  overflow: visible; /* 텍스트 숨김 해제 */
+  width: 50vw; /* 고정 너비로 일관성 유지 */
+  flex-grow: 0; /* 유동적인 크기 비율 제거 */
+  line-height: 1.5; /* 줄간격 설정 (폰트 크기의 1.5배) */
+`;
+
+const Text3 = styled.h3`
+  font-family: "Pretendard-SemiBold", sans-serif;
+  font-size: 20px;
+  color: #ff5a5a;
+`;
+const Text4 = styled.h3`
+  font-family: "Pretendard-Regular", sans-serif;
   font-size: 18px;
   color: #353131;
   margin: 0;
 `;
-
-const Text2 = styled.p`
-  font-size: 16px;
-  color: #353131;
-  margin: 0;
-  white-space: pre-wrap;
-  word-break: break-word;
-`;
-
-const Text3 = styled.span`
-  font-size: 20px;
-  color: #ff5a5a;
-  font-weight: bold;
-`;
-
-const Text4 = styled.span`
-  font-size: 16px;
-  color: #353131;
-`;
-
