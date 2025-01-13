@@ -70,6 +70,7 @@ export default function SignUp() {
               <Question onNext={() => handleNext({
     username: '', ideal: '', intro: '', status: ''
 })} />
+              
             </AnimatedWrapper>
           )}
         </MainContent>

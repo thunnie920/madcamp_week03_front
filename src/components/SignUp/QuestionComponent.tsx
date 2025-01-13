@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import choiceData from "@/public/dummy/choice_data.json";
 import { MoonLoader } from "react-spinners";
 import { usePathname } from "next/navigation";
+import axios from "axios";
 
 interface QuestionProps {
   onNext: () => void;
@@ -18,6 +19,7 @@ export default function Question({ onNext }: QuestionProps) {
   const [selected, setSelected] = useState<string | null>(null);
   const [isEntering, setIsEntering] = useState(true);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [selectedPersonalities, setSelectedPersonalities] = useState<string[]>([]); 
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
 
@@ -28,8 +30,10 @@ export default function Question({ onNext }: QuestionProps) {
     setIsClient(true); // 브라우저 환경에서만 활성화
   }, []);
 
-  const handleOptionClick = (option: string) => {
-    setSelected(option);
+  const handleOptionClick = (choice: { text: string; personality: string }) => {
+    setSelected(choice.text);
+    setSelectedPersonalities((prev) => [...new Set([...prev, choice.personality])]);
+
     setTimeout(() => {
       setIsEntering(false); // Fade Out 애니메이션 트리거
       setTimeout(() => {
@@ -42,6 +46,18 @@ export default function Question({ onNext }: QuestionProps) {
         }
       }, 300);
     }, 300);
+  };
+    // MongoDB에 성격 저장
+  const savePersonality = async () => {
+    try {
+      await axios.post("http://localhost:5000/api/user/savePersonality", {
+        kakaouserId: "65b3c8f9d2f1234567abcd00", // 테스트용 ID
+        personality: selectedPersonalities
+      });
+      alert("성격이 성공적으로 저장되었습니다!");
+    } catch (error) {
+      console.error("데이터 저장 중 오류 발생:", error);
+    }
   };
 
   useEffect(() => {
@@ -92,11 +108,11 @@ export default function Question({ onNext }: QuestionProps) {
           <ButtonGroup>
             {choiceData[currentStep].choices.map((choice) => (
               <OptionButton
-                key={choice}
-                $isSelected={selected === choice}
+                key={choice.text}
+                $isSelected={selected === choice.text}
                 onClick={() => handleOptionClick(choice)}
               >
-                {choice}
+                {choice.text}
               </OptionButton>
             ))}
           </ButtonGroup>
