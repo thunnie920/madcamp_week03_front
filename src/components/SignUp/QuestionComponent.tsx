@@ -50,15 +50,29 @@ export default function Question({ onNext }: QuestionProps) {
     // MongoDB에 성격 저장
   const savePersonality = async () => {
     try {
-      await axios.post("http://localhost:5000/api/user/savePersonality", {
-        kakaouserId: "65b3c8f9d2f1234567abcd00", // 테스트용 ID
-        personality: selectedPersonalities
-      });
-      alert("성격이 성공적으로 저장되었습니다!");
+      // 로그인된 사용자의 세션에서 데이터를 저장
+      const response = await axios.post(
+        "http://localhost:5000/api/personality/savePersonality",
+        {
+          personality: selectedPersonalities,
+        },
+        {
+          withCredentials: true, // 세션 기반 인증 활성화
+        }
+      );
+
+      if (response.status === 200) {
+        alert("성격이 성공적으로 저장되었습니다!");
+      } else {
+        console.error("응답 오류:", response.data);
+        alert("성격 저장 중 오류가 발생했습니다.");
+      }
     } catch (error) {
       console.error("데이터 저장 중 오류 발생:", error);
+      alert("성격 저장 중 오류가 발생했습니다.");
     }
-  };
+};
+
 
   useEffect(() => {
     if (isCompleted && isClient) {
