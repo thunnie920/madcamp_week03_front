@@ -48,8 +48,9 @@ export default function SecondSignUp({ onNext }: SecondSignUpProps) {
     const formData = new FormData();
     const uploadedBlob = await fetch(selectedImage).then(res => res.blob());
     const capturedBlob = await fetch(capturedImage).then(res => res.blob());
-    formData.append("images", uploadedBlob, "uploaded.jpg");
-    formData.append("images", capturedBlob, "captured.jpg");
+
+    formData.append("profileImage", uploadedBlob, "uploaded.jpg");
+    formData.append("capturedImage", capturedBlob, "captured.jpg");
 
     try {
         const response = await fetch("http://localhost:5000/api/compare-faces", {
@@ -67,14 +68,18 @@ export default function SecondSignUp({ onNext }: SecondSignUpProps) {
         const result = await response.json();
         setSimilarityScore(result.score);
 
+      // ✅ 동일한 필드명으로 유사도 업데이트
+      //formData.append("similarity", result.score.toString());
+        const updateFormData = new FormData();
+        updateFormData.append("profileImage", uploadedBlob, "uploaded.jpg");
+        updateFormData.append("similarity", result.score.toString());
+      
         // ✅ 현재 로그인한 사용자의 세션에서 유사도 업데이트 (userId 불필요)
         const updateResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/update-similarity`, {
             method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
             credentials: "include", // ✅ 세션 기반 인증 사용
-            body: JSON.stringify({ similarity: parseFloat(result.score) })
+          //body: JSON.stringify({ similarity: parseFloat(result.score) })
+            body: updateFormData,
         });
 
         if (updateResponse.ok) {
