@@ -31,14 +31,14 @@ export default function TopBar() {
     }
   }, [navigationAnimation, isHome]);
 
-  const handleChatRoomClick = () => {
+  /*const handleChatRoomClick = () => {
     const { username } = useAuth(); // Context에서 사용자 이름 가져오기
     if (username) {
       router.push(`/chat/${username}`);
     } else {
       alert("로그인이 필요합니다.");
     }
-  };
+  };*/
 
   /*const handleProfileClick = (username: string) => {
     router.push(`/detail/${encodeURIComponent(username)}`);
@@ -60,7 +60,10 @@ export default function TopBar() {
       </LogoContainer>
       <Flex $gap={20} $align="center">
         <NavItem>튜토리얼</NavItem>
-        <NavItem onClick={handleChatRoomClick}>나의 채팅방</NavItem>
+        {/*<NavItem onClick={handleChatRoomClick}>나의 채팅방</NavItem>*/}
+        <StyledLink href="/chatroom">
+          <NavItem>나의 채팅방</NavItem>
+        </StyledLink>
         <StyledLink href="/mypage">
           <NavItem>마이 페이지</NavItem>
         </StyledLink>

@@ -27,12 +27,33 @@ export default function ChatRoomCard({
         </PhotoContainer>
         <TextContainer>
           <Username>{username}</Username>
-          <Status>{status}</Status>
+          <Text>님과의 채팅방</Text>
         </TextContainer>
       </ProfileWrapper>
       <BottomContainer>
-        <IDBadge>{id}</IDBadge>
-        <StatusHighlight>{status}</StatusHighlight>
+        <TextContainer2>
+          <Text2>마지막 대화 </Text2>
+          <Date>34</Date>
+          <Text2> 일 전 </Text2>
+        </TextContainer2>
+        <div
+          style={{
+            alignItems: "flex-start",
+            display: "flex",
+            justifyContent: "flex-start",
+            background: "rgba(255, 255, 255, 0.65)",
+          }}
+        >
+          <StatusContainer>
+            <StatusText>
+              {status === "red"
+                ? "레드라이트"
+                : status === "green"
+                ? "그린라이트"
+                : "아직 잘 모르겠어요"}
+            </StatusText>
+          </StatusContainer>
+        </div>
       </BottomContainer>
     </Wrapper>
   );
@@ -41,14 +62,13 @@ export default function ChatRoomCard({
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
   padding: 20px;
   margin-top: 20px;
   width: 100%;
   box-sizing: border-box;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background-color: #f9f9f9;
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.65);
   align-items: center;
   text-align: center;
   transition: transform 0.2s ease;
@@ -63,6 +83,7 @@ const ProfileWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 15px;
+  background-color: rgba(255, 255, 255, 0.65);
   cursor: pointer;
 `;
 
@@ -71,11 +92,9 @@ const PhotoContainer = styled.div`
   height: 80px;
   border-radius: 50%;
   overflow: hidden;
-  border: 2px solid #ccc;
   display: flex;
   justify-content: center;
   align-items: center;
-
   img {
     width: 100%;
     height: 100%;
@@ -87,40 +106,79 @@ const TextContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  gap: 5px;
+  background-color: rgba(255, 255, 255, 0.65);
+`;
+
+const TextContainer2 = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 5px;
+  background-color: rgba(255, 255, 255, 0.65);
 `;
 
 const Username = styled.div`
-  font-size: 18px;
-  font-weight: bold;
-  color: #333;
+  background-color: rgba(255, 255, 255, 0.65);
+  font-family: "Pretendard-SemiBold", sans-serif;
+  font-size: 20px;
+  color: #ff5a5a;
 `;
 
-const Status = styled.div`
+const Date = styled.div`
+  background-color: rgba(255, 255, 255, 0.65);
+  font-family: "Pretendard-SemiBold", sans-serif;
   font-size: 14px;
-  color: #666;
+  color: #ff5a5a;
+`;
+
+const Text = styled.h2`
+  font-family: "Pretendard-SemiBold", sans-serif;
+  font-size: 14px;
+  color: #353131;
+  margin: 0;
+  background-color: rgba(255, 255, 255, 0.65);
+  min-width: 200px;
+  text-align: left;
+`;
+
+const Text2 = styled.h2`
+  font-family: "Pretendard-SemiBold", sans-serif;
+  font-size: 14px;
+  color: #353131;
+  margin: 0;
+  background-color: rgba(255, 255, 255, 0.65);
 `;
 
 const BottomContainer = styled.div`
   display: flex;
   width: 100%;
+  flex-direction: column;
   justify-content: space-between;
   padding: 10px 0;
-  border-top: 1px solid #eee;
   margin-top: 10px;
+  gap: 10px;
+  background-color: rgba(255, 255, 255, 0.65);
 `;
 
-const IDBadge = styled.div`
-  background-color: #ff5e57;
-  color: white;
-  font-size: 12px;
-  padding: 5px 10px;
-  border-radius: 20px;
+const StatusContainer = styled.div`
+  display: flex;
+  width: flex;
+  justify-content: center;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  padding: 5px;
+  margin 3px;
+  border-radius: 100px;
+  border: 1px solid #ff5a5a;
+  background-color: #fff9f9;
 `;
 
-const StatusHighlight = styled.div`
-  background-color: #57a1ff;
-  color: white;
+const StatusText = styled.h2`
+  font-family: "Pretendard-Medium", sans-serif;
   font-size: 12px;
-  padding: 5px 10px;
-  border-radius: 20px;
+  color: #353131;
+  margin: 0;
+  background-color: #fff9f9;
 `;
