@@ -5,40 +5,25 @@ import Pen from "@/public/images/pen.png";
 import Person from "@/public/images/person.png";
 import Image from "next/image";
 
-
 interface FirstSignUpProps {
-    onNext: (formData: {
-    username: string;
-    ideal: string;
-    intro: string;
-    status: string;
-  }) => void;
+  onNext: () => void;
 }
 
 // 페이지 컴포넌트
 export default function FirstSignUp({ onNext }: FirstSignUpProps) {
-  const [formData, setFormData] = useState({
-    username: "",
-    ideal: "",
-    intro: "",
-    status: "",
-  });
+  const [nickname, setNickname] = useState<string>("");
+  const [idealType, setIdealType] = useState<string>("");
+  const [introduction, setIntroduction] = useState<string>("");
+  const [selected, setSelected] = useState<string | null>(null);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const isNextEnabled =
+    nickname.trim() !== "" &&
+    idealType.trim() !== "" &&
+    introduction.trim() !== "" &&
+    selected !== null;
 
-  const handleOptionClick = (status: string) => {
-    setFormData((prev) => ({ ...prev, status }));
-  };
-
-  const handleNextClick = () => {
-    if (!formData.username || !formData.ideal || !formData.intro || !formData.status) {
-      alert("모든 정보를 입력해주세요!");
-      return;
-    }
-    onNext(formData);
+  const handleOptionClick = (option: string) => {
+    setSelected(option);
   };
 
   return (
@@ -51,11 +36,10 @@ export default function FirstSignUp({ onNext }: FirstSignUpProps) {
           </IconWrapper>
           <Input
             type="text"
-            name="username"
             placeholder="닉네임을 설정해주세요"
             aria-label="닉네임"
-            value={formData.username}
-            onChange={handleInputChange}
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value)}
           />
         </InputContainer>
 
@@ -66,11 +50,10 @@ export default function FirstSignUp({ onNext }: FirstSignUpProps) {
           </IconWrapper>
           <Input
             type="text"
-            name="ideal"
             placeholder="이상형을 작성해주세요"
             aria-label="이상형"
-            value={formData.ideal}
-            onChange={handleInputChange}
+            value={idealType}
+            onChange={(e) => setIdealType(e.target.value)}
           />
         </InputContainer>
 
@@ -81,19 +64,17 @@ export default function FirstSignUp({ onNext }: FirstSignUpProps) {
           </IconWrapper>
           <Input
             type="text"
-            name="intro"
             placeholder="자기 소개를 작성해주세요"
             aria-label="자기소개"
-            style={{ display: "flex", alignItems: "center" }}
-            value={formData.intro}
-            onChange={handleInputChange}
+            value={introduction}
+            onChange={(e) => setIntroduction(e.target.value)}
           />
         </InputContainer>
 
         {/* 선택 버튼 */}
         <ButtonGroup>
           <OptionButton
-            isSelected={formData.status === "single"}
+            $isSelected={selected === "single"}
             onClick={() => handleOptionClick("single")}
           >
             한 번 대화 시작 시 한 명과만 대화를 이어나가고 싶어요.
@@ -101,7 +82,7 @@ export default function FirstSignUp({ onNext }: FirstSignUpProps) {
             (상대도 1명과만 대화가 가능합니다)
           </OptionButton>
           <OptionButton
-            isSelected={formData.status === "multiple"}
+            $isSelected={selected === "multiple"}
             onClick={() => handleOptionClick("multiple")}
           >
             여러 명을 알아가고 싶어요. <br />
@@ -112,7 +93,11 @@ export default function FirstSignUp({ onNext }: FirstSignUpProps) {
 
       {/* 다음 버튼 */}
       <ButtonContainer>
-        <NextButton type="button" onClick={handleNextClick}>
+        <NextButton
+          type="button"
+          onClick={onNext}
+          disabled={!isNextEnabled} // 활성화 조건 적용
+        >
           다음으로 넘어가기
         </NextButton>
       </ButtonContainer>
@@ -122,14 +107,14 @@ export default function FirstSignUp({ onNext }: FirstSignUpProps) {
 
 // 공통 스타일 정의
 const Wrapper = styled.div`
-  padding: 20px;
+  padding: 10px;
   width: 80%;
   display: flex;
   flex-direction: column;
   height: auto;
   margin: 0 auto;
   radius: 5px;
-  margin-top: 80px;
+  gap: 20px;
 `;
 
 const InputWrapper = styled.div`
@@ -138,7 +123,7 @@ const InputWrapper = styled.div`
   display: flex;
   flex-direction: column;
   height: auto;
-  margin: 0 auto 0 0;
+  margin: auto;
   radius: 5px;
   border: 1px solid #ff7e86;
   border-radius: 5px;
@@ -178,29 +163,31 @@ const ButtonGroup = styled.div`
 `;
 
 interface OptionButtonProps {
-  isSelected: boolean;
+  $isSelected: boolean;
 }
 
-const OptionButton = styled.button<OptionButtonProps>`
+const OptionButton = styled.button<{ $isSelected: boolean }>`
   flex: 1;
   padding: 12px;
   border: 1px solid #ff7e86;
   border-radius: 8px;
-  background-color: ${(props) => (props.isSelected ? "#ffe6e9" : "#f5f5f5")};
-  color: ${(props) => (props.isSelected ? "#353131" : "#353131")};
+  background-color: ${(props) => (props.$isSelected ? "#ffe6e9" : "#f5f5f5")};
+  color: #353131;
   font-size: 12px;
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
 
   &:hover {
     background-color: #ffe6e9;
-    color: ${(props) => (props.isSelected ? "#353131" : "#ff7e86")};
+    color: #353131;
   }
 `;
 
+// 수정 내용: $isSelected를 사용하고, styled-components가 DOM에 prop을 전달하지 않도록 transient prop을 유지합니다.
+
 const ButtonContainer = styled.div`
   width: 80%;
-  margin: 16px auto 0 0;
+  margin: auto;
   display: flex;
   justify-content: center;
 `;
@@ -217,5 +204,10 @@ const NextButton = styled.button`
 
   &:hover {
     background-color: #ff5a5a;
+  }
+
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
   }
 `;

@@ -1,9 +1,9 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import styled from "styled-components";
 import Image from "next/image";
-import { useEffect, useState } from "react";
 
 interface MyProfileProps {
   username: string;
@@ -20,30 +20,38 @@ export default function MyProfile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const router = useRouter();
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/userprofile`, {
-          credentials: 'include'
-        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/userprofile`,
+          {
+            credentials: "include",
+          }
+        );
         if (!res.ok) throw new Error("Failed to fetch profile");
-        
-        // ✅ 백엔드에서 단일 객체를 반환하므로 배열이 아닌 객체로 사용
-        const data: MyProfileProps = await res.json();
-        setProfile(data);  // ✅ 전체 객체를 바로 사용
-    } catch (error) {
-        console.error("Error fetching profile:", error);
-    } finally {
-        setLoading(false);
-    }
 
+        const data: MyProfileProps = await res.json();
+        setProfile(data);
+      } catch (err) {
+        setError("프로필 정보를 불러오는 데 실패했습니다.");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchProfile();
   }, []);
 
-  if (!profile) {
-    return <div>Loading...</div>;
+  if (loading) {
+    return <div>로딩 중...</div>;
+  }
+
+  if (error || !profile) {
+    return <div>{error || "프로필 정보를 불러올 수 없습니다."}</div>;
   }
 
   return (
@@ -70,7 +78,7 @@ export default function MyProfile() {
           </StatusContainer>
           <TextContainer>
             <Text>프로필 사진과의 유사도</Text>
-            <div style={{ gap: "3px", display: "flex" }}>
+            <div style={{ display: "flex", gap: "3px" }}>
               <Text3>{profile.similarity}</Text3>
               <Text4>%</Text4>
             </div>
@@ -85,7 +93,7 @@ export default function MyProfile() {
           </TextContainer>
           <TextContainer>
             <Text>사람들의 별점 후기</Text>
-            <div style={{ gap: "3px", display: "flex" }}>
+            <div style={{ display: "flex", gap: "3px" }}>
               <Text4>평균 </Text4>
               <Text3>{profile.rating}</Text3>
               <Text4>점</Text4>
@@ -100,30 +108,31 @@ export default function MyProfile() {
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  align-items: center;
   padding: 20px;
-  margin-top: 80px;
-  width: 80%; /* 부모 요소의 전체 너비 사용 */
-  box-sizing: border-box; /* 패딩 포함 크기 계산 */
+  margin-top: 50px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 `;
 
 const ProfileWrapper = styled.div`
-  width: 100%; /* 부모 컨테이너의 너비를 기준으로 */
-  max-width: 100%; /* 최대 너비 제한 */
-  padding: 10px 20px;
-  margin-bottom: 20px;
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 50px;
-  box-sizing: border-box; /* 안정적인 크기 계산 */
+  width: 100%;
+  max-width: 800px;
+  padding: 20px;
+  box-sizing: border-box;
 `;
 
 const PhotoContainer = styled.div`
   width: 30vw;
   max-width: 230px;
-  aspect-ratio: 1;
+  height: 30vw;
+  max-height: 230px;
   border-radius: 50%;
   overflow: hidden;
   display: flex;
@@ -140,42 +149,31 @@ const PhotoContainer = styled.div`
 const InfoContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
   gap: 14px;
-  flex-grow: 1;
-  min-width: 0;
+  width: 100%;
 `;
 
 const UserNameContainer = styled.div`
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  align-self: stretch;
 `;
 
 const UserName = styled.h1`
-  font-family: "Pretendard-SemiBold", sans-serif;
-  font-size: 20px;
+  font-size: 24px;
   color: #ff5a5a;
   margin: 0;
 `;
 
 const StatusContainer = styled.div`
   display: flex;
-  width: flex;
   justify-content: center;
-  flex-direction: row;
   align-items: center;
-  gap: 10px;
   padding: 5px;
-  border-radius: 100px;
+  border-radius: 20px;
   border: 1px solid #ff5a5a;
   background-color: #f5f5f5;
 `;
 
 const StatusText = styled.h2`
-  font-family: "Pretendard-Medium", sans-serif;
   font-size: 14px;
   color: #353131;
   margin: 0;
@@ -183,43 +181,32 @@ const StatusText = styled.h2`
 
 const TextContainer = styled.div`
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: flex-start;
   gap: 14px;
-  max-width: 100%;
-  overflow: hidden;
+  flex-wrap: wrap;
 `;
 
 const Text = styled.h2`
-  font-family: "Pretendard-SemiBold", sans-serif;
-  font-size: 20px;
+  font-size: 18px;
   color: #353131;
   margin: 0;
-  min-width: 200px;
-  text-align: left;
 `;
 
-const Text2 = styled.h2`
-  font-family: "Pretendard-Medium", sans-serif;
-  font-size: 20px;
+const Text2 = styled.p`
+  font-size: 16px;
   color: #353131;
   margin: 0;
-  flex-grow: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: calc(100% - 200px);
+  white-space: pre-wrap;
+  word-break: break-word;
 `;
 
-const Text3 = styled.h3`
-  font-family: "Pretendard-Bold", sans-serif;
+const Text3 = styled.span`
   font-size: 20px;
   color: #ff5a5a;
+  font-weight: bold;
 `;
-const Text4 = styled.h3`
-  font-family: "Pretendard-Medium", sans-serif;
-  font-size: 20px;
+
+const Text4 = styled.span`
+  font-size: 16px;
   color: #353131;
-  margin: 0;
 `;
+

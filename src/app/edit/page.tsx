@@ -9,9 +9,8 @@ import FirstSignUp from "@/src/components/SignUp/FirstSignUpComponent";
 import SecondSignUp from "@/src/components/SignUp/SecondSignUpComponent";
 import Question from "@/src/components/SignUp/QuestionComponent";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
-export default function SignUp() {
+export default function Edit() {
   const [currentStep, setCurrentStep] = useState("first");
 
   const handleNext = () => {
@@ -22,7 +21,6 @@ export default function SignUp() {
     });
   };
 
-
   return (
     <Wrapper>
       <Spacer />
@@ -32,7 +30,7 @@ export default function SignUp() {
       <ContentWrapper>
         <WelcomeText text="여러분에 대해 알려주세요." />
         <MainContent>
-          <SideBar title="프로필 설정" />
+          <SideBar title="프로필 수정" />
           {currentStep === "first" && (
             <AnimatedWrapper key="first" $isEntering={currentStep === "first"}>
               <FirstSignUp onNext={handleNext} />

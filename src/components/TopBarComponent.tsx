@@ -1,16 +1,19 @@
 "use client";
 
 import { easeInOut, motion, useAnimation } from "framer-motion";
+import { useAuth } from "@/src/context/AuthContext"; // Context 경로 수정 필요
 import Link from "next/link";
 import styled from "styled-components";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect } from "react";
 import { Flex } from "@/src/libs/flex";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Logo from "@/public/images/logo.png";
 
 export default function TopBar() {
   const pathname = usePathname();
+  const router = useRouter();
   const navControls = useAnimation();
   const isHome = pathname === "/";
 
@@ -28,6 +31,19 @@ export default function TopBar() {
     }
   }, [navigationAnimation, isHome]);
 
+  const handleChatRoomClick = () => {
+    const { username } = useAuth(); // Context에서 사용자 이름 가져오기
+    if (username) {
+      router.push(`/chat/${username}`);
+    } else {
+      alert("로그인이 필요합니다.");
+    }
+  };
+
+  /*const handleProfileClick = (username: string) => {
+    router.push(`/detail/${encodeURIComponent(username)}`);
+  };*/
+
   return (
     <Wrapper
       initial={isHome ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
@@ -44,7 +60,7 @@ export default function TopBar() {
       </LogoContainer>
       <Flex $gap={20} $align="center">
         <NavItem>튜토리얼</NavItem>
-        <NavItem>나의 채팅방</NavItem>
+        <NavItem onClick={handleChatRoomClick}>나의 채팅방</NavItem>
         <StyledLink href="/mypage">
           <NavItem>마이 페이지</NavItem>
         </StyledLink>

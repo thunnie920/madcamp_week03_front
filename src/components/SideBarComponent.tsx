@@ -10,6 +10,7 @@ import SelectedRadioLogo from "@/public/images/selectedRadio.png";
 
 type SideBarProps = {
   title: string;
+  highlight?: string;
 };
 
 const filterData = {
@@ -48,7 +49,7 @@ const filterData = {
   ],
 };
 
-export default function SideBar({ title }: SideBarProps) {
+export default function SideBar({ title, highlight }: SideBarProps) {
   const pathname = usePathname();
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
 
@@ -83,7 +84,16 @@ export default function SideBar({ title }: SideBarProps) {
       }
       animate={pathname === "/" ? navControls : undefined}
     >
-      <Title>{title}</Title>
+      <Title>
+        {highlight ? (
+          <span>
+            <HighlightedText>{highlight}</HighlightedText> {title}
+          </span>
+        ) : (
+          title
+        )}
+      </Title>
+
       {pathname === "/"
         ? filterEntries.map(([category, items], index) => (
             <FilterSection
@@ -124,7 +134,7 @@ function FilterSection({
           <FilterItem
             key={item}
             onClick={() => onSelect(item)}
-            isSelected={isSelected}
+            $isSelected={isSelected}
           >
             <Image
               src={isSelected ? SelectedRadioLogo : UnselectedRadioLogo}
@@ -132,7 +142,7 @@ function FilterSection({
               width={20}
               height={20}
             />
-            <FilterText isSelected={isSelected}>{item}</FilterText>
+            <FilterText $isSelected={isSelected}>{item}</FilterText>
           </FilterItem>
         );
       })}
@@ -142,7 +152,7 @@ function FilterSection({
 }
 
 const Wrapper = styled(motion.div)`
-  width: 15%; /* 사이드바의 고정 너비 */
+  width: 20%; /* 사이드바의 고정 너비 */
   max-width: 300px; /* 최대 너비 제한 */
   min-width: 200px; /* 최소 너비 보장 */
   flex-shrink: 0; /* 사이즈 축소 방지 */
@@ -152,12 +162,22 @@ const Wrapper = styled(motion.div)`
   z-index: 10;
   padding: 10px;
   box-sizing: border-box; /* 패딩 포함 크기 계산 */
+  border: 1px solid #ff5a5a;
 `;
 
 const Title = styled.h1`
   font-family: "Pretendard-Medium", sans-serif;
   font-size: 20px;
   color: #353131;
+  margin-bottom: 20px;
+  white-space: nowrap; /* 줄바꿈 방지 */
+`;
+
+const HighlightedText = styled.h1`
+  font-family: "Pretendard-SemiBold", sans-serif;
+  font-size: 20px;
+  color: #ff5a5a;
+  display: inline; /* 텍스트를 인라인으로 변경 */
   margin-bottom: 20px;
 `;
 
@@ -175,19 +195,19 @@ const FilterTitle = styled.h2`
   margin: 0 0 10px 0;
 `;
 
-const FilterItem = styled.div<{ isSelected: boolean }>`
+const FilterItem = styled.div<{ $isSelected: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 10px;
   cursor: pointer;
-  font-weight: ${({ isSelected }) => (isSelected ? "bold" : "normal")};
+  font-weight: ${({ $isSelected }) => ($isSelected ? "bold" : "normal")};
 `;
 
-const FilterText = styled.span<{ isSelected: boolean }>`
+const FilterText = styled.span<{ $isSelected: boolean }>`
   font-family: "Pretendard-Regular", sans-serif;
   font-size: 14px;
-  color: ${({ isSelected }) => (isSelected ? "#000" : "#353131")};
+  color: ${({ $isSelected }) => ($isSelected ? "#000" : "#353131")};
 `;
 
 const Divider = styled.div`

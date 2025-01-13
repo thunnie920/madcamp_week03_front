@@ -1,0 +1,74 @@
+[
+  {
+    "username": "웃는 고양이",
+    "id": 10001,
+    "status": "green",
+    "photo": "/images/background/background_1.jpg"
+  },
+  {
+    "username": "행복한 강아지",
+    "id": 10002,
+    "status": "red",
+    "photo": "/images/background/background_2.jpg"
+  },
+  {
+    "username": "재빠른 토끼",
+    "id": 10003,
+    "status": "unknown",
+    "photo": "/images/background/background_3.jpg"
+  },
+  {
+    "username": "느긋한 거북이",
+    "id": 10004,
+    "status": "green",
+    "photo": "/images/background/background_4.jpg"
+  },
+  {
+    "username": "용감한 사자",
+    "id": 10005,
+    "status": "red",
+    "photo": "/images/background/background_5.jpg"
+  },
+  {
+    "username": "귀여운 판다",
+    "id": 10006,
+    "status": "unknown",
+    "photo": "/images/background/background_6.jpg"
+  },
+  {
+    "username": "활발한 다람쥐",
+    "id": 10007,
+    "status": "green",
+    "photo": "/images/background/background_7.jpg"
+  },
+  {
+    "username": "의젓한 독수리",
+    "id": 10008,
+    "status": "red",
+    "photo": "/images/background/background_8.jpg"
+  },
+  {
+    "username": "평화로운 코알라",
+    "id": 10009,
+    "status": "unknown",
+    "photo": "/images/background/background_9.jpg"
+  },
+  {
+    "username": "영리한 여우",
+    "id": 10010,
+    "status": "green",
+    "photo": "/images/background/background_10.jpg"
+  },
+  {
+    "username": "똑똑한 뱀",
+    "id": 10011,
+    "status": "green",
+    "photo": "/images/background/background_11.jpg"
+  },
+  {
+    "username": "노래하는 카나리아",
+    "id": 10012,
+    "status": "green",
+    "photo": "/images/background/background_12.jpg"
+  }
+]
