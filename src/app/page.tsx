@@ -1,33 +1,14 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import "@/src/styles/globals.css";
 import styled from "styled-components";
 import TopBar from "@/src/components/TopBarComponent";
 import WelcomeText from "@/src/components/welcomeTextComponent";
 import SideBar from "@/src/components/SideBarComponent";
-import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
 import OthersProfile from "@/src/components/OthersProfile";
-import axios from "axios";
+import { useRouter } from "next/navigation";
 
-<<<<<<< HEAD
-export default function Home() {
-
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-      const fetchUser = async () => {
-          try {
-              const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/user`);
-              setUser(response.data);
-          } catch (error) {
-              console.error("로그인 상태를 불러오지 못했습니다.", error);
-          }
-      };
-      fetchUser();
-  }, []);
-  
-=======
 interface OthersProfileProps {
   username: string;
   photo: string;
@@ -50,9 +31,7 @@ export default function MyPage() {
     const fetchProfiles = async () => {
       try {
         const res = await fetch("/dummy/people_data.json");
-        if (!res.ok) {
-          throw new Error("Failed to fetch profiles");
-        }
+        if (!res.ok) throw new Error("Failed to fetch profiles");
         const data: OthersProfileProps[] = await res.json();
         setProfiles(data);
       } catch (error) {
@@ -67,7 +46,6 @@ export default function MyPage() {
     router.push(`/detail/${encodeURIComponent(username)}`);
   };
 
->>>>>>> front2
   return (
     <Wrapper>
       <TopBarWrapper>
@@ -79,17 +57,16 @@ export default function MyPage() {
           <SideBar title="프로필" />
           <ProfileList>
             {profiles.map((profile, index) => (
-              <div
+              <ProfileItem
                 key={index}
                 onMouseMove={(event) =>
                   setHoverPosition({ x: event.clientX, y: event.clientY })
                 }
                 onMouseLeave={() => setHoverPosition(null)}
                 onClick={() => handleProfileClick(profile.username)}
-                style={{ cursor: "pointer" }}
               >
                 <OthersProfile {...profile} />
-              </div>
+              </ProfileItem>
             ))}
           </ProfileList>
         </MainContent>
@@ -142,6 +119,13 @@ const ProfileList = styled.div`
   gap: 10%;
   overflow-y: auto;
   width: 100%;
+`;
+
+const ProfileItem = styled.div`
+  cursor: pointer;
+  &:hover {
+    opacity: 0.9;
+  }
 `;
 
 const HoverText = styled.div`
