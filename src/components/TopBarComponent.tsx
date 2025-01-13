@@ -59,7 +59,6 @@ export default function TopBar() {
         </StyledLink>
       </LogoContainer>
       <Flex $gap={20} $align="center">
-        <NavItem>튜토리얼</NavItem>
         {/*<NavItem onClick={handleChatRoomClick}>나의 채팅방</NavItem>*/}
         <StyledLink href="/chatroom">
           <NavItem>나의 채팅방</NavItem>
