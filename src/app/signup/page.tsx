@@ -32,7 +32,7 @@ export default function SignUp() {
       body: JSON.stringify(formData),
     });
     if (response.ok) {
-      alert("✅ 프로필이 성공적으로 업데이트되었습니다!");
+      //alert("✅ 프로필이 성공적으로 업데이트되었습니다!");
       setCurrentStep("second"); 
     } else {
       const errorData = await response.json();

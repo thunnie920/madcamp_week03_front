@@ -41,8 +41,8 @@ export default function SecondSignUp({ onNext }: SecondSignUpProps) {
     // ✅ 업로드 및 캡처 사진 비교 함수 (서버로 전송)
   const handleCompareImages = async () => {
     if (!selectedImage || !capturedImage) {
-      alert("사진을 모두 업로드하거나 촬영해 주세요.");
-      return;
+        alert("사진을 모두 업로드하거나 촬영해 주세요.");
+        return;
     }
 
     const formData = new FormData();
@@ -50,6 +50,7 @@ export default function SecondSignUp({ onNext }: SecondSignUpProps) {
     const capturedBlob = await fetch(capturedImage).then(res => res.blob());
     formData.append("images", uploadedBlob, "uploaded.jpg");
     formData.append("images", capturedBlob, "captured.jpg");
+
     try {
         const response = await fetch("http://localhost:5000/api/compare-faces", {
             method: "POST",
@@ -64,12 +65,31 @@ export default function SecondSignUp({ onNext }: SecondSignUpProps) {
         }
 
         const result = await response.json();
-        alert(`유사도 점수: ${result.score}`);
+        setSimilarityScore(result.score);
+
+        // ✅ 현재 로그인한 사용자의 세션에서 유사도 업데이트 (userId 불필요)
+        const updateResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/update-similarity`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include", // ✅ 세션 기반 인증 사용
+            body: JSON.stringify({ similarity: parseFloat(result.score) })
+        });
+
+        if (updateResponse.ok) {
+            alert(`✅ 유사도 점수(${result.score})가 성공적으로 저장되었습니다!`);
+        } else {
+            const errorData = await updateResponse.json();
+            alert(`❌ 유사도 점수 저장 실패: ${errorData.message}`);
+        }
+
     } catch (error) {
         console.error("클라이언트 오류:", error);
         alert("이미지 비교 중 오류가 발생했습니다.");
     }
   };
+
 
   return (
     <Wrapper>
@@ -98,13 +118,13 @@ export default function SecondSignUp({ onNext }: SecondSignUpProps) {
           {/* 카메라 활성 상태에 따라 렌더링 */}
         </CameraWrapper>
       </ContentWrapper>
-      {/* <ButtonContainer>
+      <ButtonContainer>
         <NextButton onClick={handleNextButtonClick} disabled={!isNextEnabled}>
           사진 업로드 하기
         </NextButton>
-      </ButtonContainer> */}
+      </ButtonContainer>
 
-      {/* ✅ 사진 비교 버튼 --> 나중에 삭제해야됨 */}
+      {/* ✅ 사진 비교 버튼*/}
       <ButtonContainer>
         <NextButton onClick={handleCompareImages} disabled={!isPhotoCaptured}>
           사진 유사도 비교
