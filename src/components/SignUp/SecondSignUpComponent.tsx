@@ -156,14 +156,16 @@ export default function SecondSignUp({ onNext }: SecondSignUpProps) {
 
       {/* 3) 유사도 검사 결과 화면 */}
       {!isLoading && similarityScore !== null && (
-        <ResultWrapper>
+        <>
           <ResultText>
-            유사도 점수: <strong>{similarityScore}%</strong>
+            유사도 점수: <strong>{similarityScore}</strong>
           </ResultText>
           <ButtonContainer>
-            <NextButton onClick={onNext}>다음 단계로 이동</NextButton>
+            <NextButton onClick={handleNextButtonClick}>
+              다음 단계로 이동
+            </NextButton>
           </ButtonContainer>
-        </ResultWrapper>
+        </>
       )}
     </Wrapper>
   );
