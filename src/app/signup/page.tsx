@@ -12,36 +12,46 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function SignUp() {
-  const [currentStep, setCurrentStep] = useState<"first" | "second" | "question">("first");
-
+  const [currentStep, setCurrentStep] = useState<
+    "first" | "second" | "question"
+  >("first");
   const router = useRouter();
 
- const handleNext = async (formData: {
-  username: string;
-  ideal: string;
-  intro: string;
-  status: string;
+  const handleNext = async (formData: {
+    username: string;
+    ideal: string;
+    intro: string;
+    status: string;
   }) => {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(formData),
-    });
-    if (response.ok) {
-      alert("✅ 프로필이 성공적으로 업데이트되었습니다!");
-      setCurrentStep("second"); 
-    } else {
-      const errorData = await response.json();
-      alert(`❌ 오류 발생: ${errorData.message}`);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/signup`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(formData),
+        }
+      );
+      if (response.ok) {
+        alert("✅ 프로필이 성공적으로 업데이트되었습니다!");
+
+        // 현재 단계에 따라 다음 단계를 분기 처리
+        if (currentStep === "first") {
+          setCurrentStep("second");
+        } else if (currentStep === "second") {
+          setCurrentStep("question");
+        }
+      } else {
+        const errorData = await response.json();
+        alert(`❌ 오류 발생: ${errorData.message}`);
+      }
+    } catch (error) {
+      console.error("❌ 서버 오류:", error);
     }
-  } catch (error) {
-    console.error("❌ 서버 오류:", error);
-  }
-};
+  };
 
   return (
     <Wrapper>
@@ -59,18 +69,37 @@ export default function SignUp() {
             </AnimatedWrapper>
           )}
           {currentStep === "second" && (
-            <AnimatedWrapper key="second" $isEntering={currentStep === "second"}>
-              <SecondSignUp onNext={() => handleNext({
-    username: '', ideal: '', intro: '', status: ''
-})} />
+            <AnimatedWrapper
+              key="second"
+              $isEntering={currentStep === "second"}
+            >
+              <SecondSignUp
+                onNext={() =>
+                  handleNext({
+                    username: "",
+                    ideal: "",
+                    intro: "",
+                    status: "",
+                  })
+                }
+              />
             </AnimatedWrapper>
           )}
           {currentStep === "question" && (
-            <AnimatedWrapper key="question" $isEntering={currentStep === "question"}>
-              <Question onNext={() => handleNext({
-    username: '', ideal: '', intro: '', status: ''
-})} />
-              
+            <AnimatedWrapper
+              key="question"
+              $isEntering={currentStep === "question"}
+            >
+              <Question
+                onNext={() =>
+                  handleNext({
+                    username: "",
+                    ideal: "",
+                    intro: "",
+                    status: "",
+                  })
+                }
+              />
             </AnimatedWrapper>
           )}
         </MainContent>
