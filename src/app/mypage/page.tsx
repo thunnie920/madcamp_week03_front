@@ -76,7 +76,8 @@ export default function MyPage() {
             onMouseLeave={handleMouseLeave}
             style={{ border: "1px solid purple", width: "100px" }}
           >
-            <MyProfile />
+            {/* onClick prop 넘겨주기 */}
+            <MyProfile onClick={handleProfileClick} />
             {hoverPosition && (
               <HoverText
                 style={{
