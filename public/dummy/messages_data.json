@@ -1,0 +1,37 @@
+{
+  "chatRoomId": 10001,
+  "participants": [
+    {
+      "userId": "myId",
+      "username": "나",
+      "photo": "/images/background/my_photo.jpg",
+      "status": "green"
+    },
+    {
+      "userId": "10001",
+      "username": "웃는 고양이",
+      "photo": "/images/background/background_1.jpg",
+      "status": "green"
+    }
+  ],
+  "messages": [
+    {
+      "messageId": "msg1",
+      "senderId": "10001",
+      "content": "안녕! 잘 지내?",
+      "timestamp": "2025-01-13T10:00:00Z"
+    },
+    {
+      "messageId": "msg2",
+      "senderId": "myId",
+      "content": "응! 고마워. 너는 어때?",
+      "timestamp": "2025-01-13T10:01:00Z"
+    },
+    {
+      "messageId": "msg3",
+      "senderId": "10001",
+      "content": "나도 좋아. 오늘 날씨 정말 좋다!",
+      "timestamp": "2025-01-13T10:02:00Z"
+    }
+  ]
+}

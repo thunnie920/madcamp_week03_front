@@ -43,7 +43,7 @@ export default function ChatRoomCard({
             alignItems: "flex-start",
             display: "flex",
             justifyContent: "flex-start",
-            background: "rgba(255, 255, 255, 0.65)",
+            background: "#fcf9f9",
           }}
         >
           <StatusContainer status={status}>
@@ -70,7 +70,7 @@ const Wrapper = styled.div`
   width: 100%;
   box-sizing: border-box;
   border-radius: 5px;
-  background-color: rgba(255, 255, 255, 0.65);
+  background-color: #fcf9f9;
   align-items: center;
   text-align: center;
   transition: transform 0.2s ease;
@@ -85,7 +85,7 @@ const ProfileWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 15px;
-  background-color: rgba(255, 255, 255, 0.65);
+  background-color: #fcf9f9;
   cursor: pointer;
 `;
 
@@ -109,7 +109,7 @@ const TextContainer = styled.div`
   flex-direction: column;
   align-items: flex-start;
   gap: 5px;
-  background-color: rgba(255, 255, 255, 0.65);
+  background-color: #fcf9f9;
 `;
 
 const TextContainer2 = styled.div`
@@ -117,18 +117,18 @@ const TextContainer2 = styled.div`
   flex-direction: row;
   align-items: flex-start;
   gap: 5px;
-  background-color: rgba(255, 255, 255, 0.65);
+  background-color: #fcf9f9;
 `;
 
 const Username = styled.div`
-  background-color: rgba(255, 255, 255, 0.65);
+  background-color: #fcf9f9;
   font-family: "Pretendard-SemiBold", sans-serif;
   font-size: 20px;
   color: #ff5a5a;
 `;
 
 const Date = styled.div`
-  background-color: rgba(255, 255, 255, 0.65);
+  background-color: #fcf9f9;
   font-family: "Pretendard-SemiBold", sans-serif;
   font-size: 14px;
   color: #ff5a5a;
@@ -139,7 +139,7 @@ const Text = styled.h2`
   font-size: 14px;
   color: #353131;
   margin: 0;
-  background-color: rgba(255, 255, 255, 0.65);
+  background-color: #fcf9f9;
   min-width: 200px;
   text-align: left;
 `;
@@ -149,7 +149,7 @@ const Text2 = styled.h2`
   font-size: 14px;
   color: #353131;
   margin: 0;
-  background-color: rgba(255, 255, 255, 0.65);
+  background-color: #fcf9f9;
 `;
 
 const BottomContainer = styled.div`
@@ -160,7 +160,7 @@ const BottomContainer = styled.div`
   padding: 10px 0;
   margin-top: 10px;
   gap: 10px;
-  background-color: rgba(255, 255, 255, 0.65);
+  background-color: #fcf9f9;
 `;
 
 const StatusContainer = styled.div<{ status: string }>`
