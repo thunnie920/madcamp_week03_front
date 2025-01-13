@@ -1,0 +1,72 @@
+[
+  {
+    "username": "와들와들 햄스터",
+    "rating": 1,
+    "period": 34,
+    "review": "저 사람 진짜 이상해요. 저 사람 진짜 이상해요. 저 사람 진짜 이상해요. 저 사람 진짜 이상해요. 저 사람 진짜 이상해요. 저 사람 진짜 이상해요.",
+    "photo": "/images/people/profile_11.jpg"
+  },
+  {
+    "username": "모험가 토끼",
+    "rating": 4,
+    "period": 15,
+    "review": "좋은 경험이었어요. 조금 어색했지만 나쁘지 않았습니다. 좋은 경험이었어요. 조금 어색했지만 나쁘지 않았습니다. 좋은 경험이었어요. 조금 어색했지만 나쁘지 않았습니다. 좋은 경험이었어요. 조금 어색했지만 나쁘지 않았습니다.",
+    "photo": "/images/people/profile_12.jpg"
+  },
+  {
+    "username": "귀여운 다람쥐",
+    "rating": 5,
+    "period": 10,
+    "review": "최고였어요! 너무 재밌고 유익한 대화였습니다. 최고였어요! 너무 재밌고 유익한 대화였습니다. 최고였어요! 너무 재밌고 유익한 대화였습니다.",
+    "photo": "/images/people/profile_13.jpg"
+  },
+  {
+    "username": "상냥한 여우",
+    "rating": 2,
+    "period": 3,
+    "review": "대화가 잘 통하지 않았어요. 대화가 잘 통하지 않았어요. 대화가 잘 통하지 않았어요. 대화가 잘 통하지 않았어요. 대화가 잘 통하지 않았어요.",
+    "photo": "/images/people/profile_14.jpg"
+  },
+  {
+    "username": "분주한 비버",
+    "rating": 3,
+    "period": 20,
+    "review": "보통이었습니다. 특별할 것 없는 대화. 보통이었습니다. 특별할 것 없는 대화. 보통이었습니다. 특별할 것 없는 대화. 보통이었습니다. 특별할 것 없는 대화.",
+    "photo": "/images/people/profile_15.jpg"
+  },
+  {
+    "username": "사려 깊은 올빼미",
+    "rating": 5,
+    "period": 45,
+    "review": "대화에서 많은 걸 배웠어요! 추천합니다. 대화에서 많은 걸 배웠어요! 추천합니다. 대화에서 많은 걸 배웠어요! 추천합니다. 대화에서 많은 걸 배웠어요! 추천합니다.",
+    "photo": "/images/people/profile_16.jpg"
+  },
+  {
+    "username": "조용한 거북이",
+    "rating": 1,
+    "period": 8,
+    "review": "소통이 거의 없었어요. 소통이 거의 없었어요. 소통이 거의 없었어요. 소통이 거의 없었어요. 소통이 거의 없었어요.",
+    "photo": "/images/people/profile_17.jpg"
+  },
+  {
+    "username": "활발한 강아지",
+    "rating": 4,
+    "period": 33,
+    "review": "대체로 즐거운 시간이었습니다. 대체로 즐거운 시간이었습니다. 대체로 즐거운 시간이었습니다. 대체로 즐거운 시간이었습니다.",
+    "photo": "/images/people/profile_18.jpg"
+  },
+  {
+    "username": "느긋한 고양이",
+    "rating": 3,
+    "period": 22,
+    "review": "괜찮았지만 뭔가 부족한 느낌이 있었어요. 괜찮았지만 뭔가 부족한 느낌이 있었어요. 괜찮았지만 뭔가 부족한 느낌이 있었어요.",
+    "photo": "/images/people/profile_19.jpg"
+  },
+  {
+    "username": "현명한 곰",
+    "rating": 5,
+    "period": 12,
+    "review": "아주 유익하고 깊은 대화를 나눴습니다. 아주 유익하고 깊은 대화를 나눴습니다. 아주 유익하고 깊은 대화를 나눴습니다. 아주 유익하고 깊은 대화를 나눴습니다.",
+    "photo": "/images/people/profile_20.jpg"
+  }
+]

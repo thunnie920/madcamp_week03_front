@@ -5,11 +5,49 @@ import styled from "styled-components";
 import TopBar from "@/src/components/TopBarComponent";
 import WelcomeText from "@/src/components/welcomeTextComponent";
 import SideBar from "@/src/components/SideBarComponent";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import OthersProfile from "@/src/components/OthersProfile";
-import MyProfile from "../components/MyProfie";
-import Link from "next/link";
+
+interface OthersProfileProps {
+  username: string;
+  photo: string;
+  status: string;
+  similarity: number;
+  intro: string;
+  ideal: string;
+  rating: number;
+}
 
 export default function MyPage() {
+  const router = useRouter();
+  const [profiles, setProfiles] = useState<OthersProfileProps[]>([]);
+  const [hoverPosition, setHoverPosition] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      try {
+        const res = await fetch("/dummy/people_data.json");
+        if (!res.ok) {
+          throw new Error("Failed to fetch profiles");
+        }
+        const data: OthersProfileProps[] = await res.json();
+        setProfiles(data);
+      } catch (error) {
+        console.error("Error fetching profiles:", error);
+      }
+    };
+
+    fetchProfiles();
+  }, []);
+
+  const handleProfileClick = (username: string) => {
+    router.push(`/detail/${encodeURIComponent(username)}`);
+  };
+
   return (
     <Wrapper>
       <TopBarWrapper>
@@ -19,11 +57,30 @@ export default function MyPage() {
         <WelcomeText text="여러분을 소개해보세요." />
         <MainContent>
           <SideBar title="프로필" />
-          <StyledLink href="/detail">
-            <OthersProfile />
-          </StyledLink>
+          <ProfileList>
+            {profiles.map((profile, index) => (
+              <div
+                key={index}
+                onMouseMove={(event) =>
+                  setHoverPosition({ x: event.clientX, y: event.clientY })
+                }
+                onMouseLeave={() => setHoverPosition(null)}
+                onClick={() => handleProfileClick(profile.username)}
+                style={{ cursor: "pointer" }}
+              >
+                <OthersProfile {...profile} />
+              </div>
+            ))}
+          </ProfileList>
         </MainContent>
       </ContentWrapper>
+      {hoverPosition && (
+        <HoverText
+          style={{ top: hoverPosition.y + 10, left: hoverPosition.x + 10 }}
+        >
+          더 알아보기
+        </HoverText>
+      )}
     </Wrapper>
   );
 }
@@ -31,7 +88,7 @@ export default function MyPage() {
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  width: 85vw;
+  width: 100vw;
   height: 100vh;
 `;
 
@@ -53,25 +110,28 @@ const ContentWrapper = styled.div`
 const MainContent = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 2%; /* 컴포넌트 간 간격 */
+  gap: 2%;
   width: 100%;
   height: 100%;
   align-items: flex-start;
-
-  /* Sidebar와 OthersProfile 간 비율 설정 */
-  > div:first-child {
-    flex-shrink: 0; /* SideBar는 축소되지 않음 */
-  }
-  > div:last-child {
-    flex-grow: 1; /* OthersProfile은 남은 공간을 채움 */
-  }
 `;
 
-const StyledLink = styled(Link)`
-  text-decoration: none;
+const ProfileList = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  color: inherit;
-  cursor: pointer;
+  gap: 10%;
+  overflow-y: auto;
+  width: 100%;
+`;
+
+const HoverText = styled.div`
+  position: fixed;
+  pointer-events: none; /* 마우스 이벤트 방지 */
+  background: rgba(0, 0, 0, 0.8);
+  color: #f5f5f5;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  white-space: nowrap;
+  z-index: 1000;
 `;

@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import styled from "styled-components";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface MyProfileProps {
@@ -13,195 +14,81 @@ interface MyProfileProps {
   intro: string;
   ideal: string;
   rating: number;
+  onClick?: () => void;
 }
 
-export default function MyProfile() {
-  const [profile, setProfile] = useState<MyProfileProps | null>(null);
-  const [tooltip1, setTooltip1] = useState<{
-    x: number;
-    y: number;
-    content: string;
-  } | null>(null);
-
-  const [tooltip2, setTooltip2] = useState<{
-    x: number;
-    y: number;
-    content: string;
-  } | null>(null);
-
-  const handleMouseEnter1 = (
-    e: React.MouseEvent,
-    item: {
-      intro: string;
-      ideal: string;
-    }
-  ) => {
-    setTooltip1({
-      x: e.clientX,
-      y: e.clientY,
-      content: `자기 소개: ${item.intro}`,
-    });
-  };
-
-  const handleMouseEnter2 = (
-    e: React.MouseEvent,
-    item: {
-      intro: string;
-      ideal: string;
-    }
-  ) => {
-    setTooltip2({
-      x: e.clientX,
-      y: e.clientY,
-      content: `이상형: ${item.ideal}`,
-    });
-  };
-
-  const handleMouseLeave1 = () => {
-    setTooltip1(null);
-  };
-
-  const handleMouseLeave2 = () => {
-    setTooltip2(null);
-  };
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await fetch("/dummy/people_data.json");
-        if (!res.ok) {
-          throw new Error("Failed to fetch profile");
-        }
-        const data: MyProfileProps[] = await res.json();
-        console.log("Fetched profile:", data[0]); // 첫 번째 데이터 확인
-        setProfile(data[0]); // 첫 번째 요소만 설정
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-      }
-    };
-
-    fetchProfile();
-  }, []);
-
-  if (!profile) {
-    return <div>Loading...</div>;
-  }
-
+export default function MyProfile({
+  username,
+  photo,
+  status,
+  similarity,
+  intro,
+  ideal,
+  rating,
+  onClick,
+}: MyProfileProps) {
   return (
-    <div>
-      <Wrapper>
-        <ProfileWrapper>
-          <PhotoContainer>
-            <Image
-              src={profile.photo}
-              alt={`${profile.username}의 프로필 사진`}
-              width={200}
-              height={200}
-            />
-          </PhotoContainer>
-          <InfoContainer>
-            <UserNameContainer>
-              <UserName>{profile.username}</UserName>
-            </UserNameContainer>
-            <StatusContainer>
-              <StatusText>
-                {profile.status === "single"
-                  ? "나와만 얘기해줘요"
-                  : "여러 명과 얘기해도 괜찮아요"}
-              </StatusText>
-            </StatusContainer>
-            <TextContainer>
-              <Text>프로필 사진과의 유사도</Text>
-              <div style={{ gap: "3px", display: "flex" }}>
-                <Text3>{profile.similarity}</Text3>
-                <Text4>%</Text4>
-              </div>
-            </TextContainer>
-            <TextContainer>
-              <Text>자기 소개</Text>
-              <Text2
-                onMouseEnter={(e) =>
-                  handleMouseEnter1(e, {
-                    intro: profile.intro,
-                    ideal: profile.ideal,
-                  })
-                }
-                onMouseLeave={handleMouseLeave1}
-              >
-                {profile.intro}
-              </Text2>
-            </TextContainer>
-            <TextContainer>
-              <Text>이상형</Text>
-              <Text2
-                onMouseEnter={(e) =>
-                  handleMouseEnter2(e, {
-                    intro: profile.intro,
-                    ideal: profile.ideal,
-                  })
-                }
-                onMouseLeave={handleMouseLeave2}
-              >
-                {profile.ideal}
-              </Text2>
-            </TextContainer>
-            <TextContainer>
-              <Text>사람들의 별점 후기</Text>
-              <div style={{ gap: "3px", display: "flex" }}>
-                <Text4>평균 </Text4>
-                <Text3>{profile.rating}</Text3>
-                <Text4>점</Text4>
-              </div>
-            </TextContainer>
-          </InfoContainer>
-        </ProfileWrapper>
-      </Wrapper>
-      {tooltip1 && (
-        <div
-          style={{
-            position: "absolute",
-            top: tooltip1.y,
-            left: tooltip1.x - 200,
-            backgroundColor: "rgba(240, 240, 240, 0.8)",
-            color: "#353131",
-            padding: "5px",
-            borderRadius: "4px",
-            pointerEvents: "none",
-            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
-          }}
-        >
-          <pre>{tooltip1.content}</pre>
-        </div>
-      )}
-      {tooltip2 && (
-        <div
-          style={{
-            position: "absolute",
-            top: tooltip2.y,
-            left: tooltip2.x - 200,
-            backgroundColor: "rgba(240, 240, 240, 0.8)",
-            color: "#353131",
-            padding: "5px",
-            borderRadius: "4px",
-            pointerEvents: "none",
-            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
-          }}
-        >
-          <pre>{tooltip2.content}</pre>
-        </div>
-      )}
-    </div>
+    <Wrapper>
+      <ProfileWrapper onClick={onClick}>
+        <PhotoContainer>
+          <Image
+            src={photo}
+            alt={`${username}의 프로필 사진`}
+            width={200}
+            height={200}
+          />
+        </PhotoContainer>
+        <InfoContainer>
+          <UserNameContainer>
+            <UserName>{username}</UserName>
+          </UserNameContainer>
+          <StatusContainer>
+            <StatusText>
+              {status === "single"
+                ? "나와만 얘기해줘요"
+                : "여러 명과 얘기해도 괜찮아요"}
+            </StatusText>
+          </StatusContainer>
+          <TextContainer>
+            <Text>프로필 사진과의 유사도</Text>
+            <div style={{ gap: "3px", display: "flex" }}>
+              <Text3>{similarity}</Text3>
+              <Text4>%</Text4>
+            </div>
+          </TextContainer>
+          <TextContainer>
+            <Text>자기 소개</Text>
+            <Text2>{intro}</Text2>
+          </TextContainer>
+          <TextContainer>
+            <Text>이상형</Text>
+            <Text2>{ideal}</Text2>
+          </TextContainer>
+          <TextContainer>
+            <Text>사람들의 별점 후기</Text>
+            <div style={{ gap: "3px", display: "flex" }}>
+              <Text4>평균 </Text4>
+              <Text3>{rating}</Text3>
+              <Text4>점</Text4>
+            </div>
+          </TextContainer>
+        </InfoContainer>
+      </ProfileWrapper>
+    </Wrapper>
   );
 }
 
 const Wrapper = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 40px;
   padding: 20px;
-  margin-top: 80px;
-  width: 80%; /* 부모 요소의 전체 너비 사용 */
+  margin-top: 50px;
+  width: 100%; /* 부모 요소의 전체 너비 사용 */
   box-sizing: border-box; /* 패딩 포함 크기 계산 */
+  overflow-x: hidden; /* 가로 스크롤 방지 */
+  border: 1px solid red;
+  align-items: center;
 `;
 
 const ProfileWrapper = styled.div`
@@ -211,16 +98,18 @@ const ProfileWrapper = styled.div`
   margin-bottom: 0px;
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center; /* 자식 요소를 y축 중앙 정렬 */
   justify-content: space-between;
   gap: 50px;
   box-sizing: border-box; /* 안정적인 크기 계산 */
+  border: 1px solid purple;
 `;
 
 const PhotoContainer = styled.div`
   width: 30vw;
   max-width: 230px;
-  aspect-ratio: 1;
+  height: 30vw;
+  max-height: 230px;
   border-radius: 50%;
   overflow: hidden;
   display: flex;
@@ -236,10 +125,12 @@ const PhotoContainer = styled.div`
 
 const InfoContainer = styled.div`
   display: flex;
+  width: 100%;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 14px;
+  overflow: hidden;
   flex-grow: 1;
   min-width: 0;
 `;
@@ -299,14 +190,15 @@ const Text = styled.h2`
 
 const Text2 = styled.h2`
   font-family: "Pretendard-Regular", sans-serif;
-  font-size: 20px;
+  font-size: 18px;
   color: #353131;
   margin: 0;
-  flex-grow: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: calc(100% - 200px);
+  white-space: normal; /* 여러 줄 허용 */
+  word-break: break-word; /* 단어가 너무 길 경우 줄바꿈 */
+  overflow: visible; /* 텍스트 숨김 해제 */
+  width: 50vw; /* 고정 너비로 일관성 유지 */
+  flex-grow: 0; /* 유동적인 크기 비율 제거 */
+  line-height: 1.5; /* 줄간격 설정 (폰트 크기의 1.5배) */
 `;
 
 const Text3 = styled.h3`
@@ -316,7 +208,7 @@ const Text3 = styled.h3`
 `;
 const Text4 = styled.h3`
   font-family: "Pretendard-Regular", sans-serif;
-  font-size: 20px;
+  font-size: 18px;
   color: #353131;
   margin: 0;
 `;

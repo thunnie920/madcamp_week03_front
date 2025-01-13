@@ -2,27 +2,28 @@
 
 import "@/src/styles/globals.css";
 import styled from "styled-components";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import TopBar from "@/src/components/TopBarComponent";
 import WelcomeText from "@/src/components/welcomeTextComponent";
 import SideBar from "@/src/components/SideBarComponent";
-import MyProfile from "@/src/components/MyProfie";
+import ChatRoomCard from "@/src/components/ChatRoomCardComponent";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 
-interface MyProfileProps {
+interface ChatRoomCardProps {
   username: string;
   photo: string;
+  id: number;
   status: string;
-  similarity: number;
-  intro: string;
-  ideal: string;
-  rating: number;
   onClick?: () => void;
 }
 
-export default function MyPage() {
+export default function Detail() {
   const router = useRouter();
-  const [profile, setProfile] = useState<MyProfileProps | null>(null);
+  const [chatRoomCard, setChatRoomCard] = useState<ChatRoomCardProps | null>(
+    null
+  );
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [hoverPosition, setHoverPosition] = useState<{
     x: number;
@@ -37,30 +38,44 @@ export default function MyPage() {
     setHoverPosition(null);
   };
 
-  const handleProfileClick = () => {
-    router.push("/edit");
-  };
-
   useEffect(() => {
     const fetchProfile = async () => {
+      const rawUsername = window.location.pathname.split("/").pop();
+      if (!rawUsername) {
+        setError("Invalid username");
+        setIsLoading(false);
+        return;
+      }
+
+      const username = decodeURIComponent(rawUsername);
+
+      setIsLoading(true);
       try {
-        const res = await fetch("/dummy/people_data.json");
+        const res = await fetch("/dummy/chatroom_data.json");
         if (!res.ok) {
-          throw new Error("Failed to fetch profile");
+          throw new Error("Failed to fetch profiles");
         }
-        const data: MyProfileProps[] = await res.json();
-        setProfile(data[0]); // 첫 번째 프로필만 설정
-      } catch (error) {
-        console.error("Error fetching profile:", error);
+
+        const data: ChatRoomCardProps[] = await res.json();
+        const user = data.find((item) => item.username === username);
+        if (!user) {
+          throw new Error("Profile not found");
+        }
+
+        setChatRoomCard(user);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchProfile();
   }, []);
 
-  if (!profile) {
-    return <div>Loading...</div>;
-  }
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
+  if (!chatRoomCard) return <p>No data available</p>;
 
   return (
     <Wrapper>
@@ -68,24 +83,15 @@ export default function MyPage() {
         <TopBar />
       </TopBarWrapper>
       <ContentWrapper>
-        <WelcomeText text="여러분을 소개해보세요." />
+        <WelcomeText text="채팅방에서 사랑을 시작해보세요" />
         <MainContent>
-          <SideBar title="프로필" />
+          <SideBar title="님의 채팅방" highlight={chatRoomCard.username} />
           <div
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
-            style={{ border: "1px solid purple", width: "100px" }}
+            style={{ border: "1px solid purple", padding: "20px" }}
           >
-            <MyProfile
-              username={profile.username}
-              photo={profile.photo}
-              status={profile.status}
-              similarity={profile.similarity}
-              intro={profile.intro}
-              ideal={profile.ideal}
-              rating={profile.rating}
-              onClick={handleProfileClick}
-            />
+            <ChatRoomCard {...chatRoomCard} />
             {hoverPosition && (
               <HoverText
                 style={{
@@ -93,7 +99,7 @@ export default function MyPage() {
                   left: hoverPosition.x + 10,
                 }}
               >
-                프로필 수정하기
+                채팅방 들어가기
               </HoverText>
             )}
           </div>
@@ -130,22 +136,25 @@ const MainContent = styled.div`
   flex-direction: row;
   gap: 2%;
   width: 100%;
-  height: 100%;
   align-items: flex-start;
   border: 1px solid blue;
+  overflow: hidden;
 
-  /* Sidebar와 ProfileContainer의 비율 설정 */
   > div:first-child {
     flex-shrink: 0;
+    max-width: 20%;
   }
+
   > div:last-child {
-    flex-grow: 1; /* ProfileContainer가 남은 공간을 채우도록 */
+    flex-grow: 1;
+    max-width: 80%;
+    overflow: hidden;
   }
 `;
 
 const HoverText = styled.div`
   position: fixed;
-  pointer-events: none; /* 마우스 이벤트 방지 */
+  pointer-events: none;
   background: rgba(0, 0, 0, 0.8);
   color: #f5f5f5;
   padding: 5px 10px;
