@@ -6,25 +6,51 @@ import Person from "@/public/images/person.png";
 import Image from "next/image";
 
 interface FirstSignUpProps {
-  onNext: () => void;
+  onNext: (formData: {
+    username: string;
+    ideal: string;
+    intro: string;
+    status: string;
+  }) => void;
 }
 
 // 페이지 컴포넌트
 export default function FirstSignUp({ onNext }: FirstSignUpProps) {
-  const [nickname, setNickname] = useState<string>("");
-  const [idealType, setIdealType] = useState<string>("");
-  const [introduction, setIntroduction] = useState<string>("");
-  const [selected, setSelected] = useState<string | null>(null);
+  // const [nickname, setNickname] = useState<string>("");
+  // const [idealType, setIdealType] = useState<string>("");
+  // const [introduction, setIntroduction] = useState<string>("");
+  // const [selected, setSelected] = useState<string | null>(null);
+    const [formData, setFormData] = useState({
+    username: "",
+    ideal: "",
+    intro: "",
+    status: "",
+  });
 
-  const isNextEnabled =
-    nickname.trim() !== "" &&
-    idealType.trim() !== "" &&
-    introduction.trim() !== "" &&
-    selected !== null;
+  // const isNextEnabled =
+  //   nickname.trim() !== "" &&
+  //   idealType.trim() !== "" &&
+  //   introduction.trim() !== "" &&
+  //   selected !== null;
 
-  const handleOptionClick = (option: string) => {
-    setSelected(option);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
+  const handleOptionClick = (status: string) => {
+    setFormData((prev) => ({ ...prev, status }));
+  };
+
+  const handleNextClick = () => {
+    if (!formData.username || !formData.ideal || !formData.intro || !formData.status) {
+      alert("모든 정보를 입력해주세요!");
+      return;
+    }
+    // ✅ API 호출
+    onNext(formData);
+  };
+
 
   return (
     <Wrapper>
@@ -35,11 +61,12 @@ export default function FirstSignUp({ onNext }: FirstSignUpProps) {
             <Image src={Person} alt="person" width={20} height={20} />
           </IconWrapper>
           <Input
+            name="username"
             type="text"
             placeholder="닉네임을 설정해주세요"
             aria-label="닉네임"
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
+            value={formData.username}
+            onChange={handleInputChange}
           />
         </InputContainer>
 
@@ -49,11 +76,12 @@ export default function FirstSignUp({ onNext }: FirstSignUpProps) {
             <Image src={Heart} alt="heart" width={20} height={20} />
           </IconWrapper>
           <Input
+            name="ideal"
             type="text"
             placeholder="이상형을 작성해주세요"
             aria-label="이상형"
-            value={idealType}
-            onChange={(e) => setIdealType(e.target.value)}
+            value={formData.ideal}
+            onChange={handleInputChange}
           />
         </InputContainer>
 
@@ -63,18 +91,18 @@ export default function FirstSignUp({ onNext }: FirstSignUpProps) {
             <Image src={Pen} alt="pen" width={20} height={20} />
           </IconWrapper>
           <Input
+             name="intro"
             type="text"
             placeholder="자기 소개를 작성해주세요"
-            aria-label="자기소개"
-            value={introduction}
-            onChange={(e) => setIntroduction(e.target.value)}
+            value={formData.intro}
+            onChange={handleInputChange}
           />
         </InputContainer>
 
         {/* 선택 버튼 */}
         <ButtonGroup>
           <OptionButton
-            $isSelected={selected === "single"}
+            $isSelected={formData.status === "single"}
             onClick={() => handleOptionClick("single")}
           >
             한 번 대화 시작 시 한 명과만 대화를 이어나가고 싶어요.
@@ -82,7 +110,7 @@ export default function FirstSignUp({ onNext }: FirstSignUpProps) {
             (상대도 1명과만 대화가 가능합니다)
           </OptionButton>
           <OptionButton
-            $isSelected={selected === "multiple"}
+            $isSelected={formData.status === "multiple"}
             onClick={() => handleOptionClick("multiple")}
           >
             여러 명을 알아가고 싶어요. <br />
@@ -93,11 +121,7 @@ export default function FirstSignUp({ onNext }: FirstSignUpProps) {
 
       {/* 다음 버튼 */}
       <ButtonContainer>
-        <NextButton
-          type="button"
-          onClick={onNext}
-          disabled={!isNextEnabled} // 활성화 조건 적용
-        >
+        <NextButton type="button" onClick={handleNextClick}>
           다음으로 넘어가기
         </NextButton>
       </ButtonContainer>

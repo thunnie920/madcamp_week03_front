@@ -12,16 +12,36 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function SignUp() {
-  const [currentStep, setCurrentStep] = useState("first");
+  const [currentStep, setCurrentStep] = useState<"first" | "second" | "question">("first");
 
-  const handleNext = () => {
-    setCurrentStep((prev) => {
-      if (prev === "first") return "second";
-      if (prev === "second") return "question";
-      return "completed";
+  const router = useRouter();
+
+ const handleNext = async (formData: {
+  username: string;
+  ideal: string;
+  intro: string;
+  status: string;
+  }) => {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(formData),
     });
-  };
-
+    if (response.ok) {
+      alert("✅ 프로필이 성공적으로 업데이트되었습니다!");
+      setCurrentStep("second"); 
+    } else {
+      const errorData = await response.json();
+      alert(`❌ 오류 발생: ${errorData.message}`);
+    }
+  } catch (error) {
+    console.error("❌ 서버 오류:", error);
+  }
+};
 
   return (
     <Wrapper>
@@ -35,23 +55,21 @@ export default function SignUp() {
           <SideBar title="프로필 설정" />
           {currentStep === "first" && (
             <AnimatedWrapper key="first" $isEntering={currentStep === "first"}>
-              <FirstSignUp onNext={handleNext} />
+              <FirstSignUp onNext={(formData) => handleNext(formData)} />
             </AnimatedWrapper>
           )}
           {currentStep === "second" && (
-            <AnimatedWrapper
-              key="second"
-              $isEntering={currentStep === "second"}
-            >
-              <SecondSignUp onNext={handleNext} />
+            <AnimatedWrapper key="second" $isEntering={currentStep === "second"}>
+              <SecondSignUp onNext={() => handleNext({
+    username: '', ideal: '', intro: '', status: ''
+})} />
             </AnimatedWrapper>
           )}
           {currentStep === "question" && (
-            <AnimatedWrapper
-              key="question"
-              $isEntering={currentStep === "question"}
-            >
-              <Question onNext={handleNext} />
+            <AnimatedWrapper key="question" $isEntering={currentStep === "question"}>
+              <Question onNext={() => handleNext({
+    username: '', ideal: '', intro: '', status: ''
+})} />
             </AnimatedWrapper>
           )}
         </MainContent>
