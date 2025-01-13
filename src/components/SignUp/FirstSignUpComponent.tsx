@@ -5,6 +5,7 @@ import Pen from "@/public/images/pen.png";
 import Person from "@/public/images/person.png";
 import Image from "next/image";
 
+
 interface FirstSignUpProps {
     onNext: (formData: {
     username: string;

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
+import Profile1 from "@/public/images/people/profile_1.jpg";
 
 export default function Camera() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -53,34 +54,53 @@ export default function Camera() {
     }
   };
 
-  const screenshot = (): void => {
+  const screenshot = async (): Promise<void> => {
     setCanvasState(""); // Show canvas
     setCameraState("none"); // Hide video
 
     const video = videoRef.current;
-    const canvas = document.getElementById("canvas") as HTMLCanvasElement;
+    const canvas = canvasRef.current;
+    const uploadedImage = Profile1;  // 사용자가 업로드한 프로필 이미지
+
     if (canvas && video) {
       const context = canvas.getContext("2d");
       if (context) {
-        context.scale(-1, 1); // Flip horizontally
-        context.translate(-1024, 0);
-        context.drawImage(video, 0, 0, 1024, 768);
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        canvas.toBlob((blob) => {
+        // 이미지 데이터를 Blob으로 변환
+        canvas.toBlob(async (blob) => {
           if (blob) {
-            const file = new File([blob], "fileName.jpg", {
-              type: "image/jpeg",
-            });
-            console.log("File created:", file);
+            // Blob을 FormData에 추가
+            const formData = new FormData();
+            formData.append("image", blob, "photo.jpg");
+            formData.append("images", uploadedImage.src, "profile.jpg");
+
+            try {
+              // 백엔드 API 호출
+              const response = await fetch("https://your-backend-url.com/api/similarity-check", {
+                method: "POST",
+                body: formData,
+              });
+
+              if (!response.ok) {
+                throw new Error("Failed to send image to the server");
+              }
+
+              const result = await response.json();
+              console.log("Similarity check result:", result);
+
+              // 결과 처리 로직 추가
+              alert(`Similarity score: ${result.score}`);
+            } catch (error) {
+              console.error("Error during similarity check:", error);
+              alert("Error sending image to the server.");
+            }
           }
         }, "image/jpeg");
 
-        const image = canvas.toDataURL("image/jpeg");
-        const link = document.createElement("a");
-        link.href = image;
-        link.download = "PaintJS[🎨]";
-        link.click();
-
+        // 비디오 스트림 종료
         if (video.srcObject) {
           const stream = video.srcObject as MediaStream;
           stream.getTracks().forEach((track) => track.stop());
@@ -88,7 +108,6 @@ export default function Camera() {
       }
     }
   };
-
   return (
     <div
       style={{
