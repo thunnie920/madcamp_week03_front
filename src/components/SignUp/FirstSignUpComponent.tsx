@@ -12,21 +12,23 @@ interface FirstSignUpProps {
     intro: string;
     status: string;
   }) => void;
+  initialData: {
+    username: string;
+    ideal: string;
+    intro: string;
+    status: string;
+  };
 }
 
-// 페이지 컴포넌트
-export default function FirstSignUp({ onNext }: FirstSignUpProps) {
-  // const [nickname, setNickname] = useState<string>("");
-  // const [idealType, setIdealType] = useState<string>("");
-  // const [introduction, setIntroduction] = useState<string>("");
-  // const [selected, setSelected] = useState<string | null>(null);
-    const [formData, setFormData] = useState({
-    username: "",
-    ideal: "",
-    intro: "",
-    status: "",
-  });
 
+// 페이지 컴포넌트
+export default function FirstSignUp({ onNext, initialData }: FirstSignUpProps) {
+  const [formData, setFormData] = useState({
+    username: initialData.username || "",
+    ideal: initialData.ideal || "",
+    intro: initialData.intro || "",
+    status: initialData.status || "",
+  });
   // const isNextEnabled =
   //   nickname.trim() !== "" &&
   //   idealType.trim() !== "" &&

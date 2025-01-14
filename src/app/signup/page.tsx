@@ -11,45 +11,74 @@ import Question from "@/src/components/SignUp/QuestionComponent";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+// ✅ FormDataType을 수정하여 photo와 similarity 포함
+interface FormDataType {
+  username: string;
+  ideal: string;
+  intro: string;
+  status: string;
+  personality: string[];
+  photo: string;
+  similarity: number | null;
+}
+
 export default function SignUp() {
-  const [currentStep, setCurrentStep] = useState<
-    "first" | "second" | "question"
-  >("first");
+  const [currentStep, setCurrentStep] = useState<"first" | "second" | "question">("first");
+  const [formData, setFormData] = useState<FormDataType>({
+    username: "",
+    ideal: "",
+    intro: "",
+    status: "",
+    personality: [],
+    photo: "",
+    similarity: null,
+  });
+
   const router = useRouter();
 
-  const handleNext = async (formData: {
-    username: string;
-    ideal: string;
-    intro: string;
-    status: string;
-  }) => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/signup`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(formData),
-        }
-      );
-      if (response.ok) {
-        alert("✅ 프로필이 성공적으로 업데이트되었습니다!");
+  // ✅ 기존 데이터 유지 & photo, similarity만 업데이트 (SecondSignUp 전용)
+  const handleNext = async (updatedData: Partial<FormDataType>): Promise<void> => {
+    // ✅ 최신 데이터 병합 후, 상태를 바로 업데이트
+    const updatedFormData = {
+      ...formData,
+      photo: updatedData.photo ?? formData.photo,
+      similarity: updatedData.similarity ?? formData.similarity,
+      personality: updatedData.personality
+        ? [...new Set([...formData.personality, ...updatedData.personality])]
+        : formData.personality,
+      ...updatedData,
+    };
 
-        // 현재 단계에 따라 다음 단계를 분기 처리
-        if (currentStep === "first") {
-          setCurrentStep("second");
-        } else if (currentStep === "second") {
-          setCurrentStep("question");
-        }
-      } else {
-        const errorData = await response.json();
-        alert(`❌ 오류 발생: ${errorData.message}`);
-      }
-    } catch (error) {
-      console.error("❌ 서버 오류:", error);
+    setFormData(updatedFormData);
+
+    // if (currentStep === "question") {
+    //   try {
+    //     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup`, {
+    //       method: "PUT",
+    //       headers: { "Content-Type": "application/json" },
+    //       credentials: "include",
+    //       body: JSON.stringify(updatedFormData)
+    //     });
+    //     if (response.ok) {
+    //       alert("✅ 프로필이 성공적으로 업데이트되었습니다!");
+    //       router.push("/");
+    //     } else {
+    //       const errorData = await response.json();
+    //       alert(`❌ 오류 발생: ${errorData.message}`);
+    //     }
+    //   } catch (error) {
+    //     console.error("❌ 서버 오류:", error);
+    //   }
+    // } else {
+    //   // ✅ 다음 단계로 이동
+    //   setCurrentStep((prevStep) =>
+    //     prevStep === "first" ? "second" : prevStep === "second" ? "question" : "first"
+    //   );
+    // }
+    if (currentStep !== "question") {
+      setCurrentStep((prevStep) =>
+        prevStep === "first" ? "second" : prevStep === "second" ? "question" : "first"
+      );
     }
   };
 
@@ -65,40 +94,25 @@ export default function SignUp() {
           <SideBar title="프로필 설정" />
           {currentStep === "first" && (
             <AnimatedWrapper key="first" $isEntering={currentStep === "first"}>
-              <FirstSignUp onNext={(formData) => handleNext(formData)} />
+              <FirstSignUp onNext={(updatedData) => handleNext(updatedData)} initialData={formData} />
             </AnimatedWrapper>
           )}
           {currentStep === "second" && (
-            <AnimatedWrapper
-              key="second"
-              $isEntering={currentStep === "second"}
-            >
+            <AnimatedWrapper key="second" $isEntering={currentStep === "second"}>
+              {/* ✅ SecondSignUp에서는 photo와 similarity만 업데이트 */}
               <SecondSignUp
-                onNext={() =>
-                  handleNext({
-                    username: "",
-                    ideal: "",
-                    intro: "",
-                    status: "",
-                  })
+                onNext={async (updatedData) =>
+                  await handleNext({ photo: updatedData.photo, similarity: updatedData.similarity })
                 }
+                initialData={formData}
               />
             </AnimatedWrapper>
           )}
           {currentStep === "question" && (
-            <AnimatedWrapper
-              key="question"
-              $isEntering={currentStep === "question"}
-            >
+            <AnimatedWrapper key="question" $isEntering={currentStep === "question"}>
+              {/* ✅ Question 컴포넌트는 personality만 업데이트 */}
               <Question
-                onNext={() =>
-                  handleNext({
-                    username: "",
-                    ideal: "",
-                    intro: "",
-                    status: "",
-                  })
-                }
+                onNext={(updatedData) => handleNext({ personality: updatedData.personality })}
               />
             </AnimatedWrapper>
           )}

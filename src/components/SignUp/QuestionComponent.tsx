@@ -37,14 +37,36 @@ export default function Question({ onNext }: QuestionProps) {
 
     setTimeout(() => {
       setIsEntering(false); // Fade Out 애니메이션 트리거
-      setTimeout(() => {
+      setTimeout(async () => {
         if (currentStep < choiceData.length - 1) {
           setCurrentStep((prev) => prev + 1);
           setSelected(null);
           setIsEntering(true); // Fade In 애니메이션 트리거
         } else {
           setIsCompleted(true); // 질문 완료 상태로 전환
-          onNext({ personality: selectedPersonalities });
+           try {
+              const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/personality/savePersonality`, {
+                  method: "POST",
+                  headers: {
+                      "Content-Type": "application/json"
+                  },
+                  credentials: "include",  // ✅ 쿠키 기반 인증 활성화
+                  body: JSON.stringify({
+                      personality: selectedPersonalities
+                  })
+              });
+
+              if (response.ok) {
+                alert("✅ 성격이 성공적으로 저장되었습니다!");
+                onNext({ personality: selectedPersonalities });
+              } else {
+                  const errorData = await response.json();
+                  alert(`❌ 오류 발생: ${errorData.message}`);
+              }
+          } catch (error) {
+              console.error("❌ 서버 오류:", error);
+          }
+          
         }
       }, 300);
     }, 300);

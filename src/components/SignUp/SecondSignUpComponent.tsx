@@ -6,7 +6,8 @@ import Image from "next/image";
 import { SyncLoader } from "react-spinners";
 
 interface SecondSignUpProps {
-  onNext: () => void;
+  onNext: (data: { photo: string; similarity: number | null }) => Promise<void>;
+  initialData: { photo: string; similarity: number | null };
 }
 
 export default function SecondSignUp({ onNext }: SecondSignUpProps) {
@@ -34,10 +35,13 @@ export default function SecondSignUp({ onNext }: SecondSignUpProps) {
 
   const isNextEnabled = isPhotoCaptured; // 사진이 업로드되거나 캡처되었을 때만 활성화
 
-  const handleNextButtonClick = () => {
-    if (isNextEnabled) {
-      onNext(); // 다음 단계로 이동
-    }
+  const handleNextButtonClick = async () => {
+      if (isNextEnabled) {
+          await onNext({ 
+              photo: selectedImage || capturedImage || "", 
+              similarity: similarityScore 
+          });
+      }
   };
 
   // ✅ 업로드 및 캡처 사진 비교 함수 (서버로 전송)
