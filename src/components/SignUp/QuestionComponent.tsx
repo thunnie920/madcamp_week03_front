@@ -57,7 +57,7 @@ export default function Question({ onNext }: QuestionProps) {
               });
 
               if (response.ok) {
-                alert("✅ 성격이 성공적으로 저장되었습니다!");
+                //alert("✅ 성격이 성공적으로 저장되었습니다!");
                 onNext({ personality: selectedPersonalities });
               } else {
                   const errorData = await response.json();

@@ -90,7 +90,7 @@ export default function SecondSignUp({ onNext }: SecondSignUpProps) {
       );
 
       if (updateResponse.ok) {
-        alert(`✅ 유사도 점수(${result.score})가 성공적으로 저장되었습니다!`);
+        //alert(`✅ 유사도 점수(${result.score})가 성공적으로 저장되었습니다!`);
       } else {
         const errorData = await updateResponse.json();
         alert(`❌ 유사도 점수 저장 실패: ${errorData.message}`);

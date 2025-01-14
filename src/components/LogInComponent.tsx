@@ -8,7 +8,7 @@ import { easeIn, easeInOut, motion } from "framer-motion";
 export default function LogInComponent() {
   const kakaoLogin = () => {
     console.log("카카오 로그인 버튼 클릭됨!");
-    alert("카카오 로그인 버튼 클릭됨!");
+    //alert("카카오 로그인 버튼 클릭됨!");
 
     // 카카오 로그인 페이지로 리다이렉트
     window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_REDIRECT_URI}&response_type=code`;
