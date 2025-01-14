@@ -57,7 +57,6 @@ const ChatContainer = styled.div`
   height: 100%;
   flex-direction: column;
   border-right: 1px solid #ff5a5a; /* 세로선 추가 */
-  padding-right: 20px; /* 여백 추가 */
   border: 1px solid black;
 `;
 

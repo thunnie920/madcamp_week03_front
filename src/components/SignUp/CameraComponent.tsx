@@ -57,7 +57,7 @@ export default function Camera({ onPhotoCaptured }: CameraProps) {
     }
   };
 
-  const screenshot = (): void => {
+  /*const screenshot = (): void => {
     setCanvasState(""); // Show canvas
     setCameraState("none"); // Hide video
 
@@ -87,6 +87,88 @@ export default function Camera({ onPhotoCaptured }: CameraProps) {
         link.download = "photo.jpg";
         link.click();
 
+        if (video.srcObject) {
+          const stream = video.srcObject as MediaStream;
+          stream.getTracks().forEach((track) => track.stop());
+        }
+      }
+    }
+  };*/
+  /*
+  const screenshot = (): void => {
+    setCanvasState(""); // Show canvas
+    setCameraState("none"); // Hide video
+
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+
+    if (canvas && video) {
+      const context = canvas.getContext("2d");
+      if (context) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        // Apply mirror mode (horizontal flip)
+        context.scale(-1, 1); // Flip horizontally
+        context.translate(-canvas.width, 0); // Translate back to the canvas
+
+        // Draw the flipped video frame on the canvas
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Convert canvas content to Blob
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const file = new File([blob], "fileName.jpg", {
+              type: "image/jpeg",
+            });
+            console.log("File created:", file);
+          }
+        }, "image/jpeg");
+
+        // Convert canvas content to data URL
+        const image = canvas.toDataURL("image/jpeg");
+        onPhotoCaptured(image);
+
+        // Download the image
+        const link = document.createElement("a");
+        link.href = image;
+        link.download = "photo.jpg";
+        link.click();
+
+        // Stop video stream
+        if (video.srcObject) {
+          const stream = video.srcObject as MediaStream;
+          stream.getTracks().forEach((track) => track.stop());
+        }
+      }
+    }
+  };*/
+
+  const screenshot = (): void => {
+    setCanvasState(""); // Show canvas
+    setCameraState("none"); // Hide video
+
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+
+    if (canvas && video) {
+      const context = canvas.getContext("2d");
+      if (context) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        // Apply mirror mode (horizontal flip)
+        context.scale(-1, 1); // Flip horizontally
+        context.translate(-canvas.width, 0); // Translate back to the canvas
+
+        // Draw the flipped video frame on the canvas
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Convert canvas content to data URL
+        const image = canvas.toDataURL("image/jpeg");
+        onPhotoCaptured(image);
+
+        // Stop video stream
         if (video.srcObject) {
           const stream = video.srcObject as MediaStream;
           stream.getTracks().forEach((track) => track.stop());

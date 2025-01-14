@@ -77,9 +77,9 @@ const BtnContainer = styled(motion.div)`
 `;
 
 const WelcomeTitle = styled.div`
+  font-family: "Pretendard-Bold", sans-serif;
   font-size: 40px;
-  font-weight: 700;
-  color: #302d2d;
+  color: #353131;
   margin: 0;
   text-align: left;
   width: 100%;

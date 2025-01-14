@@ -163,7 +163,7 @@ export default function ChatComponent() {
   useEffect(() => {
     const fetchChatData = async () => {
       try {
-        const response = await fetch("/data/messages_data.json");
+        const response = await fetch("/dummy/messages_data.json");
         if (!response.ok) {
           throw new Error(`Failed to load chat data: ${response.status}`);
         }
@@ -292,8 +292,8 @@ export default function ChatComponent() {
       </ChatAreaContainer>
       {/* 입력 영역 */}
       <InputArea>
-        <div style={{ width: "80%", display: "flex" }}>
-          <TextField
+        <div style={{ width: "80%", display: "flex", background: "#d9d9d9" }}>
+          <StyledTextField
             id="standard-search"
             type="search"
             variant="standard"
@@ -303,7 +303,6 @@ export default function ChatComponent() {
             onCompositionStart={handleCompositionStart}
             onCompositionEnd={handleCompositionEnd}
             placeholder="대화를 나눠보세요..."
-            style={{ width: "100%", marginBottom: "5px" }}
           />
         </div>
       </InputArea>
@@ -317,7 +316,8 @@ const ChatContainer = styled.div`
   flex-direction: column;
   width: 100%;
   gap: 7px;
-  height: 45vh;
+  height: 100%;
+  border: 1px solid blue;
   border-radius: 5px;
   background-color: #f5f5f5;
   padding: 7px;
@@ -332,6 +332,24 @@ const InputArea = styled.div`
   justify-content: center;
   color: #302d2d;
   background-color: #d9d9d9;
+`;
+
+const StyledTextField = styled(TextField)`
+  width: 100%;
+  margin-bottom: 5px;
+  background-color: #d9d9d9 !important; /* 배경색 */
+
+  .MuiInputBase-root {
+    background-color: #d9d9d9; /* 입력 영역의 배경색 */
+  }
+
+  .MuiInput-underline:before {
+    border-bottom: 2px solid transparent; /* 기본 밑줄 제거 */
+  }
+
+  .MuiInput-underline:after {
+    border-bottom: 2px solid #353131; /* 활성 밑줄 색 변경 */
+  }
 `;
 
 const NameText = styled.div`
@@ -377,13 +395,14 @@ const ChatAreaContainer = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  height: calc(45vh - 54px);
+  height: calc(100% - 50px);
   width: 100%;
   gap: 6px;
   align-items: flex-start;
   justify-content: flex-start;
   max-height: calc(100% - 50px);
   overflow-y: auto;
+  border: 1px solid red;
 
   &::-webkit-scrollbar {
     width: 0px;

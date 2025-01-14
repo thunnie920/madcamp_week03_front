@@ -22,10 +22,35 @@ interface OthersProfileProps {
 export default function MyPage() {
   const router = useRouter();
   const [profiles, setProfiles] = useState<OthersProfileProps[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
   const [hoverPosition, setHoverPosition] = useState<{
     x: number;
     y: number;
   } | null>(null);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/auth/userprofile", {
+          credentials: "include", // 쿠키 포함 전송
+        });
+        if (res.status === 401) {
+          router.push("/login");
+          return;
+        }
+        if (!res.ok) throw new Error(`Failed to fetch: ${res.statusText}`);
+        const data = await res.json();
+        setUser(data.user);
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, [router]);
 
   useEffect(() => {
     const fetchProfiles = async () => {
