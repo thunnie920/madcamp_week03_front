@@ -6,7 +6,7 @@ import Image from "next/image";
 import NewPerson from "@image/newPerson.png";
 import AIImage from "@/public/images/aiimage.png";
 import TextField from "@mui/material/TextField";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 // 메시지 타입 정의
 interface Message {
@@ -40,19 +40,20 @@ export default function AISuggestionComponent() {
 
     // ✅ URL에서 chatRoomId 가져오기
     useEffect(() => {
-        if (router.isReady) {
-            const id = router.query.chatRoomId as string;
+        const currentPath = window.location.pathname;
+        const id = currentPath.split("/").pop();
+        if (id) {
             setChatRoomId(id);
         }
-    }, [router.isReady, router.query.chatRoomId]);
+    }, []);
 
     // ✅ AI 피드백 가져오기 (5개 메시지마다)
     useEffect(() => {
         const fetchAiFeedback = async () => {
             if (!chatRoomId) return;
-
+            console.log("✅ chatRoomId:", chatRoomId);
             try {
-                const response = await fetch(`/api/chatrooms/ai-feedback`, {
+                const response = await fetch(`http://localhost:5000/api/chatrooms/ai-feedback`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
