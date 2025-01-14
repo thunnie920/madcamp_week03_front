@@ -8,7 +8,7 @@
       "@/*": ["*"]
     },
     "baseUrl": ".",
-    "types": ["react", "react-dom"],
+    "types": ["react", "react-dom", "next-auth"],
     "strict": true /* Enable all strict type-checking options. */,
     "esModuleInterop": true /* Support for CommonJS modules. */,
     "allowSyntheticDefaultImports": true /* Allow default imports even if the module doesn't have a default export. */,
