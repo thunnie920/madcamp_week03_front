@@ -32,6 +32,7 @@ export default function ChatRoom() {
   } | null>(null);
   const [userId, setUserId] = useState<ObjectId | null>(null);
   const [chatRooms, setChatRooms] = useState<ChatRoomProps[]>([]);
+  const [currentUsername, setCurrentUsername] = useState<string>("");
 
   // ✅ (1) 로그인된 사용자 ID 가져오기
   useEffect(() => {
@@ -44,12 +45,14 @@ export default function ChatRoom() {
                   credentials: "include"
               });
 
-              if (!response.ok) {
-                  throw new Error("채팅방 데이터를 불러오지 못했습니다.");
-              }
+        const result = await response.json();
 
-              const data: ChatRoomProps[] = await response.json();
-              setChatRooms(data);
+        // ✅ 백엔드에서 데이터 정상적으로 수신되는지 콘솔 확인
+        console.log("✅ 백엔드 데이터:", result); 
+
+        // ✅ 데이터를 state에 저장
+        setCurrentUsername(result.username);
+        setChatRooms(result.chatRooms);
           } catch (error) {
               console.error("Error fetching chat rooms:", error);
           }
@@ -57,9 +60,6 @@ export default function ChatRoom() {
       fetchChatRooms();
   }, []);
 
-  if (chatRooms.length === 0) {
-    return <div>참여 중인 채팅방이 없습니다.</div>;
-  } 
 
 
   const handleMouseMove = (event: React.MouseEvent) => {
@@ -74,23 +74,6 @@ export default function ChatRoom() {
     router.push(`/chat/${id}`); // Navigate to a specific chat room
   };
 
-  // useEffect(() => {
-  //   const fetchProfiles = async () => {
-  //     try {
-  //       const res = await fetch("/dummy/chatroom_data.json");
-  //       if (!res.ok) {
-  //         throw new Error("Failed to fetch profiles");
-  //       }
-  //       const data: ChatRoomProps[] = await res.json();
-  //       setProfiles(data);
-  //     } catch (error) {
-  //       console.error("Error fetching profiles:", error);
-  //     }
-  //   };
-
-  //   fetchProfiles();
-  // }, []);
-
   if (!chatRooms.length) {
     return <div>Loading...</div>;
   }
@@ -103,7 +86,7 @@ export default function ChatRoom() {
       <ContentWrapper>
         <WelcomeText text="채팅방에서 사랑을 시작해보세요." />
         <MainContent>
-          <SideBar title="님의 채팅방" highlight="잠자는 호랑이" />
+          <SideBar title="님의 채팅방" highlight={currentUsername} />
           {/*여기서 hightlight 부분에 현재 로그인한 유저 아이디 넣어야 함 */}
           <ProfileContainer>
             {chatRooms.map((room) =>
