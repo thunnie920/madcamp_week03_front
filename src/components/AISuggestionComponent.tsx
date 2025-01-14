@@ -75,9 +75,9 @@ export default function AISuggestionComponent() {
     }, [chatRoomId]);
   return (
     <ChatContainer>
+      <FeedbackText>{aiFeedback}</FeedbackText>
       <ImageContainer>
         <Image src={AIImage} alt="인공지능" />
-        <FeedbackText>{aiFeedback}</FeedbackText>
       </ImageContainer>
     </ChatContainer>
   );
@@ -113,13 +113,9 @@ const ChatContainer = styled.div`
 
 const FeedbackText = styled.div`
     position: absolute;
-    bottom: 20%; /* 이미지를 기준으로 위치 조정 */
+    top: 20%; /* 이미지를 기준으로 위치 조정 */
     left: 50%;
     transform: translateX(-50%);
-    color: white;
-    font-weight: bold;
-    font-size: 18px;
-    background: rgba(0, 0, 0, 0.6); /* 반투명 배경 */
-    padding: 10px;
-    border-radius: 8px;
+    color: black;
+    font-size: 16px;
 `;
