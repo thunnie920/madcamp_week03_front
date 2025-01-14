@@ -10,6 +10,10 @@ import { useState, useEffect } from "react";
 import OthersProfile from "@/src/components/OthersProfile";
 import OthersReview from "@/src/components/OthersReview";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { ObjectId } from "bson";
+import { usePathname } from "next/navigation";
+
 
 interface ProfileDetailsProps {
   username: string;
@@ -30,19 +34,27 @@ interface OthersReviewProps {
 }
 
 export default function Detail() {
-  const router = useRouter();
-  const [profile, setProfile] = useState<ProfileDetailsProps>({
-    username: "",
-    photo: "",
-    status: "",
-    similarity: 0,
-    intro: "",
-    ideal: "",
-    rating: 0,
-  });
+  // const router = useRouter();
+  // const [profile, setProfile] = useState<ProfileDetailsProps>({
+  //   username: "",
+  //   photo: "",
+  //   status: "",
+  //   similarity: 0,
+  //   intro: "",
+  //   ideal: "",
+  //   rating: 0,
+  // });
+  const searchParams = useSearchParams();
   const [reviews, setReviews] = useState<OthersReviewProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [profile, setProfile] = useState<ProfileDetailsProps | null>(null);
+  //const userId = searchParams.get("userId");
+  const mongoose = require("mongoose");
+
+  //const encode_userId = typeof window !== "undefined" ? window.location.pathname.split("/").pop() : null;
+  const pathname = usePathname(); // ✅ 현재 경로 가져오기
+  const encode_userId = pathname.split("/").pop(); // ✅ 마지막 경로 요소를 userId로 사용
 
   const [hoverPosition, setHoverPosition] = useState<{
     x: number;
@@ -59,43 +71,35 @@ export default function Detail() {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const rawUsername = window.location.pathname.split("/").pop();
-      if (!rawUsername) {
-        setError("Invalid username");
+      if (!encode_userId) {
+        setError("유저 ID를 찾을 수 없습니다.");
+        setIsLoading(false);
         return;
       }
-
-      const username = decodeURIComponent(rawUsername); // URL에서 디코딩
-      console.log("Decoded username:", username); // 디버깅용 로그
-
       setIsLoading(true);
       try {
-        const res = await fetch("/dummy/people_data.json");
+        const decode_userId = decodeURIComponent(encode_userId);
+        console.log("decode_userId:", decode_userId);
+
+        const res = await fetch(`http://localhost:5000/auth/showuserprofile/${decode_userId}`);
         const res2 = await fetch("/dummy/review_data.json");
-        if (!res.ok) {
-          throw new Error("Failed to fetch profiles");
-        }
-        const data: ProfileDetailsProps[] = await res.json();
+        if (!res.ok) throw new Error("유저 정보를 불러올 수 없습니다.");
+
+        const data = await res.json();
         const data2: OthersReviewProps[] = await res2.json();
-        console.log("Fetched data:", data); // 디버깅용 로그
 
-        const user = data.find((item) => item.username === username);
-        if (!user) {
-          throw new Error("Profile not found");
-        }
-
-        setProfile(user);
+        setProfile(data);
         setReviews(data2);
-      } catch (err: any) {
-        console.error(err);
-        setError(err.message);
+
+      } catch (error) {
+        setError("데이터 로딩 중 오류가 발생했습니다.");
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchProfile();
-  }, []);
+  }, [encode_userId]);
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -118,13 +122,21 @@ export default function Detail() {
           }}
         >
           <MainContent>
-            <SideBar title="님의 프로필" highlight={profile.username} />
+            <SideBar title="님의 프로필" highlight={profile?.username || ""} />
             <div
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
               style={{ border: "1px solid purple" }}
             >
-              <OthersProfile {...profile} />
+              <OthersProfile
+                username={profile?.username ?? "알 수 없음"}
+                photo={profile?.photo ?? "/default-image.jpg"}
+                status={profile?.status ?? "unknown"}
+                similarity={profile?.similarity ?? 0}
+                intro={profile?.intro ?? "소개 정보 없음"}
+                ideal={profile?.ideal ?? "이상형 정보 없음"}
+                rating={profile?.rating ?? 0}
+            />
               {hoverPosition && (
                 <HoverText
                   style={{
@@ -138,7 +150,7 @@ export default function Detail() {
             </div>
           </MainContent>
           <MainContent>
-            <SideBar title="님이 받은 평가" highlight={profile.username} />
+            <SideBar title="님이 받은 평가" highlight={profile?.username} />
             <div
               style={{
                 display: "flex",

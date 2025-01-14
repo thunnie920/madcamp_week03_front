@@ -86,9 +86,9 @@ export default function MyPage() {
         <MainContent>
           <SideBar title="프로필" />
           <ProfileList>
-            {profiles.map((profile, index) => (
+            {profiles.map((profile) => (
               <ProfileItem
-                key={index}
+                key={profile.userId}
                 onMouseMove={(event) =>
                   setHoverPosition({ x: event.clientX, y: event.clientY })
                 }
