@@ -9,16 +9,76 @@ import FirstSignUp from "@/src/components/SignUp/FirstSignUpComponent";
 import SecondSignUp from "@/src/components/SignUp/SecondSignUpComponent";
 import Question from "@/src/components/SignUp/QuestionComponent";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+// ✅ FormDataType 인터페이스 정의
+interface FormDataType {
+  username: string;
+  ideal: string;
+  intro: string;
+  status: string;
+  photo: string;
+  similarity: number | null;
+  personality: string[];
+}
 
 export default function Edit() {
-  const [currentStep, setCurrentStep] = useState("first");
+  const [currentStep, setCurrentStep] = useState<"first" | "second" | "question">("first");
+  const [formData, setFormData] = useState<FormDataType>({
+    username: "",
+    ideal: "",
+    intro: "",
+    status: "",
+    photo: "",
+    similarity: null,
+    personality: []
+  });
+  const router = useRouter();
 
-  const handleNext = () => {
-    setCurrentStep((prev) => {
-      if (prev === "first") return "second";
-      if (prev === "second") return "question";
-      return "completed";
-    });
+  // ✅ 기존 데이터 유지 & photo, similarity만 업데이트 (SecondSignUp 전용)
+  const handleNext = async (updatedData: Partial<FormDataType>): Promise<void> => {
+    // ✅ 최신 데이터 병합 후, 상태를 바로 업데이트
+    const updatedFormData = {
+      ...formData,
+      photo: updatedData.photo ?? formData.photo,
+      similarity: updatedData.similarity ?? formData.similarity,
+      personality: updatedData.personality
+        ? [...new Set([...formData.personality, ...updatedData.personality])]
+        : formData.personality,
+      ...updatedData,
+    };
+
+    setFormData(updatedFormData);
+
+    if (currentStep === "question") {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(updatedFormData)
+        });
+        if (response.ok) {
+          alert("✅ 프로필이 성공적으로 업데이트되었습니다!");
+          router.push("/");
+        } else {
+          const errorData = await response.json();
+          alert(`❌ 오류 발생: ${errorData.message}`);
+        }
+      } catch (error) {
+        console.error("❌ 서버 오류:", error);
+      }
+    } else {
+      // ✅ 다음 단계로 이동
+      setCurrentStep((prevStep) =>
+        prevStep === "first" ? "second" : prevStep === "second" ? "question" : "first"
+      );
+    }
+    // if (currentStep !== "question") {
+    //   setCurrentStep((prevStep) =>
+    //     prevStep === "first" ? "second" : prevStep === "second" ? "question" : "first"
+    //   );
+    // }
   };
 
   return (
@@ -33,7 +93,16 @@ export default function Edit() {
           <SideBar title="프로필 수정" />
           {currentStep === "first" && (
             <AnimatedWrapper key="first" $isEntering={currentStep === "first"}>
-              <FirstSignUp onNext={handleNext} />
+              <FirstSignUp onNext={(updatedData) =>
+                    handleNext({
+                        username: updatedData.username,
+                        ideal: updatedData.ideal,
+                        intro: updatedData.intro,
+                        status: updatedData.status
+                    })
+                }
+                initialData={formData}
+                />
             </AnimatedWrapper>
           )}
           {currentStep === "second" && (
@@ -41,7 +110,15 @@ export default function Edit() {
               key="second"
               $isEntering={currentStep === "second"}
             >
-              <SecondSignUp onNext={handleNext} />
+              <SecondSignUp
+                onNext={(updatedData) =>
+                  handleNext({
+                    photo: updatedData.photo,
+                    similarity: updatedData.similarity
+                  })
+                }
+                initialData={formData}
+              />
             </AnimatedWrapper>
           )}
           {currentStep === "question" && (
@@ -49,7 +126,13 @@ export default function Edit() {
               key="question"
               $isEntering={currentStep === "question"}
             >
-              <Question onNext={handleNext} />
+              <Question
+                onNext={(updatedData) =>
+                  handleNext({
+                    personality: updatedData.personality
+                  })
+                }
+              />
             </AnimatedWrapper>
           )}
         </MainContent>

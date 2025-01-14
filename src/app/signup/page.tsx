@@ -75,11 +75,7 @@ export default function SignUp() {
         prevStep === "first" ? "second" : prevStep === "second" ? "question" : "first"
       );
     }
-    // if (currentStep !== "question") {
-    //   setCurrentStep((prevStep) =>
-    //     prevStep === "first" ? "second" : prevStep === "second" ? "question" : "first"
-    //   );
-    // }
+
   };
 
   return (
