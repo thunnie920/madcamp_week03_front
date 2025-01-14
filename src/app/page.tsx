@@ -10,6 +10,7 @@ import OthersProfile from "@/src/components/OthersProfile";
 import { useRouter } from "next/navigation";
 
 interface OthersProfileProps {
+  userId: string;
   username: string;
   photo: string;
   status: string;
@@ -71,8 +72,8 @@ export default function MyPage() {
     fetchProfiles();
   }, []);
 
-  const handleProfileClick = (username: string) => {
-    router.push(`/detail/${encodeURIComponent(username)}`);
+  const handleProfileClick = (userId: string) => {
+    router.push(`/detail/${encodeURIComponent(userId)}`);
   };
 
   return (
@@ -92,7 +93,7 @@ export default function MyPage() {
                   setHoverPosition({ x: event.clientX, y: event.clientY })
                 }
                 onMouseLeave={() => setHoverPosition(null)}
-                onClick={() => handleProfileClick(profile.username)}
+                onClick={() => handleProfileClick(profile.userId)}
               >
                 <OthersProfile {...profile} />
               </ProfileItem>

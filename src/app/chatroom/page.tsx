@@ -8,13 +8,19 @@ import TopBar from "@/src/components/TopBarComponent";
 import WelcomeText from "@/src/components/welcomeTextComponent";
 import SideBar from "@/src/components/SideBarComponent";
 import ChatRoomCard from "@/src/components/ChatRoomCardComponent";
+import { ObjectId } from "bson";
 
+
+// ✅ chatRoomData 타입 정의
 interface ChatRoomProps {
-  username: string;
-  photo: string;
-  id: string;
-  status: string;
-  lastchatdate: number;
+    userId: String;
+    chatRoomArray: {
+        username: string;
+        id: string;
+        status: string;
+        photo: string;
+        lastchatdate: number;
+    }[];
 }
 
 export default function ChatRoom() {
@@ -24,6 +30,37 @@ export default function ChatRoom() {
     x: number;
     y: number;
   } | null>(null);
+  const [userId, setUserId] = useState<ObjectId | null>(null);
+  const [chatRooms, setChatRooms] = useState<ChatRoomProps[]>([]);
+
+  // ✅ (1) 로그인된 사용자 ID 가져오기
+  useEffect(() => {
+      const fetchChatRooms = async () => {
+        try {
+          console.log("✅ Fetching chat rooms...");
+          //const token = localStorage.getItem("authToken");
+              const response = await fetch("http://localhost:5000/api/chatrooms/user", {
+                  method: "GET",
+                  credentials: "include"
+              });
+
+              if (!response.ok) {
+                  throw new Error("채팅방 데이터를 불러오지 못했습니다.");
+              }
+
+              const data: ChatRoomProps[] = await response.json();
+              setChatRooms(data);
+          } catch (error) {
+              console.error("Error fetching chat rooms:", error);
+          }
+      };
+      fetchChatRooms();
+  }, []);
+
+  if (chatRooms.length === 0) {
+    return <div>참여 중인 채팅방이 없습니다.</div>;
+  } 
+
 
   const handleMouseMove = (event: React.MouseEvent) => {
     setHoverPosition({ x: event.clientX, y: event.clientY });
@@ -37,24 +74,24 @@ export default function ChatRoom() {
     router.push(`/chat/${id}`); // Navigate to a specific chat room
   };
 
-  useEffect(() => {
-    const fetchProfiles = async () => {
-      try {
-        const res = await fetch("/dummy/chatroom_data.json");
-        if (!res.ok) {
-          throw new Error("Failed to fetch profiles");
-        }
-        const data: ChatRoomProps[] = await res.json();
-        setProfiles(data);
-      } catch (error) {
-        console.error("Error fetching profiles:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchProfiles = async () => {
+  //     try {
+  //       const res = await fetch("/dummy/chatroom_data.json");
+  //       if (!res.ok) {
+  //         throw new Error("Failed to fetch profiles");
+  //       }
+  //       const data: ChatRoomProps[] = await res.json();
+  //       setProfiles(data);
+  //     } catch (error) {
+  //       console.error("Error fetching profiles:", error);
+  //     }
+  //   };
 
-    fetchProfiles();
-  }, []);
+  //   fetchProfiles();
+  // }, []);
 
-  if (!profiles.length) {
+  if (!chatRooms.length) {
     return <div>Loading...</div>;
   }
 
@@ -69,7 +106,8 @@ export default function ChatRoom() {
           <SideBar title="님의 채팅방" highlight="잠자는 호랑이" />
           {/*여기서 hightlight 부분에 현재 로그인한 유저 아이디 넣어야 함 */}
           <ProfileContainer>
-            {profiles.map((profile) => (
+            {chatRooms.map((room) =>
+              room.chatRoomArray.map((profile) => (
               <CardWrapper
                 key={profile.id}
                 onMouseMove={handleMouseMove}
@@ -94,7 +132,8 @@ export default function ChatRoom() {
                   </HoverText>
                 )}
               </CardWrapper>
-            ))}
+            ))
+            )}
           </ProfileContainer>
         </MainContent>
       </ContentWrapper>

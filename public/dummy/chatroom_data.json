@@ -1,4 +1,6 @@
-[
+{
+  "userId": 10000, 
+  "chatRoomArray": [
   {
     "username": "웃는 고양이",
     "id": "10001",
@@ -83,4 +85,5 @@
     "photo": "/images/background/background_12.jpg",
     "lastchatdate": 6
   }
-]
+  ]
+}
