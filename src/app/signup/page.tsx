@@ -51,35 +51,35 @@ export default function SignUp() {
 
     setFormData(updatedFormData);
 
-    // if (currentStep === "question") {
-    //   try {
-    //     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup`, {
-    //       method: "PUT",
-    //       headers: { "Content-Type": "application/json" },
-    //       credentials: "include",
-    //       body: JSON.stringify(updatedFormData)
-    //     });
-    //     if (response.ok) {
-    //       alert("✅ 프로필이 성공적으로 업데이트되었습니다!");
-    //       router.push("/");
-    //     } else {
-    //       const errorData = await response.json();
-    //       alert(`❌ 오류 발생: ${errorData.message}`);
-    //     }
-    //   } catch (error) {
-    //     console.error("❌ 서버 오류:", error);
-    //   }
-    // } else {
-    //   // ✅ 다음 단계로 이동
-    //   setCurrentStep((prevStep) =>
-    //     prevStep === "first" ? "second" : prevStep === "second" ? "question" : "first"
-    //   );
-    // }
-    if (currentStep !== "question") {
+    if (currentStep === "question") {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(updatedFormData)
+        });
+        if (response.ok) {
+          alert("✅ 프로필이 성공적으로 업데이트되었습니다!");
+          router.push("/");
+        } else {
+          const errorData = await response.json();
+          alert(`❌ 오류 발생: ${errorData.message}`);
+        }
+      } catch (error) {
+        console.error("❌ 서버 오류:", error);
+      }
+    } else {
+      // ✅ 다음 단계로 이동
       setCurrentStep((prevStep) =>
         prevStep === "first" ? "second" : prevStep === "second" ? "question" : "first"
       );
     }
+    // if (currentStep !== "question") {
+    //   setCurrentStep((prevStep) =>
+    //     prevStep === "first" ? "second" : prevStep === "second" ? "question" : "first"
+    //   );
+    // }
   };
 
   return (
@@ -94,7 +94,16 @@ export default function SignUp() {
           <SideBar title="프로필 설정" />
           {currentStep === "first" && (
             <AnimatedWrapper key="first" $isEntering={currentStep === "first"}>
-              <FirstSignUp onNext={(updatedData) => handleNext(updatedData)} initialData={formData} />
+              <FirstSignUp onNext={(updatedData) =>
+                    handleNext({
+                        username: updatedData.username,
+                        ideal: updatedData.ideal,
+                        intro: updatedData.intro,
+                        status: updatedData.status
+                    })
+                }
+                initialData={formData}
+                />
             </AnimatedWrapper>
           )}
           {currentStep === "second" && (
