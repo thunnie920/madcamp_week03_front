@@ -7,7 +7,7 @@ import Image from "next/image";
 interface ChatRoomCardProps {
   username: string;
   photo: string;
-  id: number;
+  id: string;
   status: string;
   lastchatdate: number;
   onClick?: () => void;

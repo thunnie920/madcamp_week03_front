@@ -12,7 +12,7 @@ import ChatRoomCard from "@/src/components/ChatRoomCardComponent";
 interface ChatRoomProps {
   username: string;
   photo: string;
-  id: number;
+  id: string;
   status: string;
   lastchatdate: number;
 }
@@ -33,7 +33,7 @@ export default function ChatRoom() {
     setHoverPosition(null);
   };
 
-  const handleCardClick = (id: number) => {
+  const handleCardClick = (id: string) => {
     router.push(`/chat/${id}`); // Navigate to a specific chat room
   };
 

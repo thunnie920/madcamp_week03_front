@@ -55,15 +55,19 @@ export default function MyPage() {
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
-        const res = await fetch("/dummy/people_data.json");
-        if (!res.ok) throw new Error("Failed to fetch profiles");
-        const data: OthersProfileProps[] = await res.json();
+        const res = await fetch("http://localhost:5000/auth/alluserprofile", {
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error(`Failed to fetch: ${res.statusText}`);
+        const data = await res.json();
+        console.log(data); // 데이터 형식 확인
         setProfiles(data);
       } catch (error) {
         console.error("Error fetching profiles:", error);
+      } finally {
+        setLoading(false);
       }
     };
-
     fetchProfiles();
   }, []);
 
