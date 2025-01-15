@@ -10,17 +10,16 @@ import SideBar from "@/src/components/SideBarComponent";
 import ChatRoomCard from "@/src/components/ChatRoomCardComponent";
 import { ObjectId } from "bson";
 
-
 // ✅ chatRoomData 타입 정의
 interface ChatRoomProps {
-    userId: String;
-    chatRoomArray: {
-        username: string;
-        id: string;
-        status: string;
-        photo: string;
-        lastchatdate: number;
-    }[];
+  userId: String;
+  chatRoomArray: {
+    username: string;
+    id: string;
+    status: string;
+    photo: string;
+    lastchatdate: number;
+  }[];
 }
 
 export default function ChatRoom() {
@@ -36,31 +35,32 @@ export default function ChatRoom() {
 
   // ✅ (1) 로그인된 사용자 ID 가져오기
   useEffect(() => {
-      const fetchChatRooms = async () => {
-        try {
-          console.log("✅ Fetching chat rooms...");
-          //const token = localStorage.getItem("authToken");
-              const response = await fetch("http://localhost:5000/api/chatrooms/user", {
-                  method: "GET",
-                  credentials: "include"
-              });
+    const fetchChatRooms = async () => {
+      try {
+        console.log("✅ Fetching chat rooms...");
+        //const token = localStorage.getItem("authToken");
+        const response = await fetch(
+          "http://localhost:5000/api/chatrooms/user",
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
 
         const result = await response.json();
 
         // ✅ 백엔드에서 데이터 정상적으로 수신되는지 콘솔 확인
-        console.log("✅ 백엔드 데이터:", result); 
+        console.log("✅ 백엔드 데이터:", result);
 
         // ✅ 데이터를 state에 저장
         setCurrentUsername(result.username);
         setChatRooms(result.chatRooms);
-          } catch (error) {
-              console.error("Error fetching chat rooms:", error);
-          }
-      };
-      fetchChatRooms();
+      } catch (error) {
+        console.error("Error fetching chat rooms:", error);
+      }
+    };
+    fetchChatRooms();
   }, []);
-
-
 
   const handleMouseMove = (event: React.MouseEvent) => {
     setHoverPosition({ x: event.clientX, y: event.clientY });
@@ -91,31 +91,31 @@ export default function ChatRoom() {
           <ProfileContainer>
             {chatRooms.map((room) =>
               room.chatRoomArray.map((profile) => (
-              <CardWrapper
-                key={profile.id}
-                onMouseMove={handleMouseMove}
-                onMouseLeave={handleMouseLeave}
-              >
-                <ChatRoomCard
-                  username={profile.username}
-                  photo={profile.photo}
-                  id={profile.id}
-                  status={profile.status}
-                  lastchatdate={profile.lastchatdate}
-                  onClick={() => handleCardClick(profile.id)}
-                />
-                {hoverPosition && (
-                  <HoverText
-                    style={{
-                      top: hoverPosition.y + 10,
-                      left: hoverPosition.x + 10,
-                    }}
-                  >
-                    채팅 시작하기
-                  </HoverText>
-                )}
-              </CardWrapper>
-            ))
+                <CardWrapper
+                  key={profile.id}
+                  onMouseMove={handleMouseMove}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  <ChatRoomCard
+                    username={profile.username}
+                    photo={profile.photo}
+                    id={profile.id}
+                    status={profile.status}
+                    lastchatdate={profile.lastchatdate}
+                    onClick={() => handleCardClick(profile.id)}
+                  />
+                  {hoverPosition && (
+                    <HoverText
+                      style={{
+                        top: hoverPosition.y + 10,
+                        left: hoverPosition.x + 10,
+                      }}
+                    >
+                      채팅 시작하기
+                    </HoverText>
+                  )}
+                </CardWrapper>
+              ))
             )}
           </ProfileContainer>
         </MainContent>

@@ -2,11 +2,14 @@
 import { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import io, { Socket } from "socket.io-client";
+import { useRouter } from "next/router"; // Next.js Router 가져오기
+import { usePathname } from "next/navigation"; // Next.js navigation 훅
+
 import Image from "next/image";
 import TextField from "@mui/material/TextField";
 
-// 메시지 타입 정의
 interface Message {
+  chatroomId: string;
   messageId: string;
   senderId: string;
   senderName: string;
@@ -14,134 +17,100 @@ interface Message {
   timestamp: string;
 }
 
-// 채팅방 타입
-interface ChatRoomData {
-  chatRoomId: number;
-  participants: Participant[];
-  messages: Message[];
-}
-
-// 참가자 타입
 interface Participant {
   userId: string;
   username: string;
   photo: string;
-  status: string;
 }
 
 export default function ChatComponent() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [participants, setParticipants] = useState<Participant[]>([]);
-  const [chatRoomId, setChatRoomId] = useState<number | null>(null);
   const [currentUser, setCurrentUser] = useState<Participant | null>(null);
   const [isComposing, setIsComposing] = useState(false);
 
-  // 소켓 ref
-  //const socketRef = useRef<Socket | null>(null);
+  const socketRef = useRef<Socket | null>(null);
 
-  /*
+  const pathname = usePathname(); // 현재 경로 가져오기
+  const currentChatRoomId = pathname.split("/").pop(); // 경로에서 chatRoomId 추출
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch("http://localhost:4000/auth/profile", {
+        const res = await fetch("http://localhost:5000/auth/userprofile", {
           credentials: "include",
         });
-        if (!res.ok) {
-          throw new Error(`Fetch failed with status: ${res.status}`);
-        }
+        if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
         const data = await res.json();
         console.log("Fetched user data:", data);
 
-        // 소켓 연결
+        setCurrentUser({
+          userId: data.userId,
+          username: data.username,
+          photo: data.photo,
+        });
+
         const socket = io("http://localhost:5000", { withCredentials: true });
         socketRef.current = socket;
-        console.log("Socket initialized:", socketRef.current);
 
-        // (1) 클라이언트 -> 서버: kakao-info 이벤트로 kakaoId 전송
-        if (data.user.kakaoId) {
-          console.log("Emitting kakao-info with ID:", data.user.kakaoId);
-          socket.emit("kakao-info", data.user.kakaoId);
-        }
+        socket.on("connect", () => console.log("Socket connected:", socket.id));
+        socket.on("disconnect", (reason) =>
+          console.log("Socket disconnected:", reason)
+        );
 
-        // (2) 서버 -> 클라이언트: init 이벤트로 유저 정보 받기
-        socket.on("init", (userFromDB: User) => {
-          console.log("Received user info via init:", userFromDB);
-          // userFromDB = {_id, kakaoId, username, ...} 형태
-          setCurrentUser(userFromDB);
-        });
-
-        // (3) 서버 -> 클라이언트: receive message 이벤트로 메시지 받기
         socket.on("receive message", (msg: Message) => {
           setMessages((prev) => [...prev, msg]);
+          console.log("New message received:", msg);
         });
 
-        // 기존 메시지 가져오기
-        const messagesRes = await fetch(
-          "http://localhost:4000/chatother/messages",
-          {
-            credentials: "include",
-          }
-        );
-        if (!messagesRes.ok) {
-          throw new Error(`Failed to fetch messages: ${messagesRes.status}`);
-        }
-        const existingMessages = await messagesRes.json();
-        console.log("Fetched messages:", existingMessages);
-
-        // 기존 메시지 상태 업데이트
-        setMessages(existingMessages);
+        return () => socket.disconnect();
       } catch (error) {
-        console.error("Failed to fetch user info:", error);
+        console.error("Error fetching user:", error);
       }
     };
 
     fetchUser();
+  }, []);
 
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-      }
-    };
-  }, []);*/
-
-  // IME 관련
-  const handleCompositionStart = () => setIsComposing(true);
-  const handleCompositionEnd = () => setIsComposing(false);
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) =>
-    setInput(event.target.value);
+  useEffect(() => {
+    console.log("Updated current user data:", currentUser);
+  }, [currentUser]);
 
   // 메시지 전송 함수
-  /*
-  const sendMessage = async (messageContent: string) => {
-    console.log("socketRef.current:", socketRef.current);
-    console.log("currentUser:", currentUser);
+  const handleSendMessage = async () => {
+    if (!input.trim() || !currentUser || !socketRef.current) return;
+    if (!currentChatRoomId) {
+      console.warn("No chatroom ID found");
+      return; // chatRoomId가 없는 상황이면 전송 로직 중단
+    }
 
     if (socketRef.current && currentUser) {
-      const messageData: Message = {
+      const message: Message = {
+        chatroomId: currentChatRoomId,
         messageId: `msg_${Date.now()}`,
-        senderId: currentUser._id, // _id 사용
-        senderKakaoId: currentUser.kakaoId,
-        senderName: currentUser.username, // username 사용
-        message: messageContent,
-        time: new Date().toISOString(),
+        senderId: currentUser.userId,
+        senderName: currentUser.username,
+        content: input,
+        timestamp: new Date().toISOString(),
       };
-      console.log("Sending message:", messageData);
 
-      // *** 여기 중요! 백엔드에서 'send message' 로 듣고 있으므로 이벤트명 통일 ***
-      socketRef.current.emit("send message", messageData);
+      console.log("Message:", message);
+      socketRef.current.emit("sendMessage", message);
+
       // 2. 백엔드 API를 통해 DB에 메시지 저장
       try {
         const response = await fetch(
-          "http://localhost:4000/chatother/messages",
+          `http://localhost:5000/chatother/messages`,
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              user: currentUser._id,
-              message: messageContent,
+              user: currentUser.userId,
+              message: input,
+              chatroomId: currentChatRoomId, // string
             }),
           }
         );
@@ -155,142 +124,69 @@ export default function ChatComponent() {
       } catch (error) {
         console.error("Failed to save message to DB:", error);
       }
+      setMessages((prev) => [...prev, message]);
+      setInput("");
+
+      console.log("Message sent:", message);
     } else {
       console.warn("socketRef.current or currentUser is not initialized");
     }
-  };*/
-
-  useEffect(() => {
-    const fetchChatData = async () => {
-      try {
-        const response = await fetch("/dummy/messages_data.json");
-        if (!response.ok) {
-          throw new Error(`Failed to load chat data: ${response.status}`);
-        }
-
-        const data: ChatRoomData = await response.json();
-        setChatRoomId(data.chatRoomId);
-        setParticipants(data.participants);
-        setMessages(data.messages);
-      } catch (error) {
-        console.error("Error fetching chat data:", error);
-      }
-    };
-
-    fetchChatData();
-  }, []);
-
-  const sendMessage = (messageContent: string) => {
-    if (!messageContent.trim()) return;
-
-    const newMessage: Message = {
-      messageId: `msg_${Date.now()}`,
-      senderId: "myId",
-      senderName: "나",
-      content: messageContent,
-      timestamp: new Date().toISOString(),
-    };
-
-    setMessages((prevMessages) => [...prevMessages, newMessage]);
-    console.log("Message sent to server:", newMessage);
   };
 
-  // Enter 키 입력 시 메시지 전송
-  /*
-  const handleSendMessage = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    console.log("Key pressed:", event.key);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
+  };
 
-    if (isComposing) return;
-    if (event.key === "Enter" && input.trim()) {
-      event.preventDefault();
-      console.log("Calling sendMessage with:", input);
-      sendMessage(input);
-      setInput("");
-    }
-  };*/
-  const handleSendMessage = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (isComposing) return; // IME 상태 확인
-    if (event.key === "Enter" && input.trim()) {
-      event.preventDefault(); // 기본 Enter 동작 방지
-
-      // 메시지 전송 호출
-      sendMessage(input);
-
-      // 입력 필드 초기화
-      setInput("");
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (isComposing) return; // IME 조합 중에는 아무 작업도 하지 않음
+    if (e.key === "Enter" && !e.shiftKey) {
+      // 엔터키 단독으로 눌렀을 때만 전송
+      e.preventDefault(); // 기본 엔터키 동작 방지
+      handleSendMessage(); // 메시지 전송
     }
   };
 
   return (
     <ChatContainer>
       <ChatAreaContainer>
-        {/* 메시지 렌더링 */}
         {messages.map((msg) => {
-          const isCurrentUser =
-            currentUser && msg.senderId === currentUser.userId;
+          const isCurrentUser = currentUser?.userId === msg.senderId;
+
+          console.log(
+            "Rendering message:",
+            msg,
+            "isCurrentUser:",
+            isCurrentUser
+          );
 
           return (
             <MessageContainer
               key={msg.messageId}
               role={isCurrentUser ? "user" : "other"}
             >
-              {/* 상대방 메시지일 경우 아이콘 표시 */}
               {!isCurrentUser && (
                 <OtherIcon>
                   <Image
                     src={
-                      participants.find(
-                        (participant) => participant.userId === msg.senderId
-                      )?.photo || "/default-photo.png" // 기본 이미지 경로
+                      participants.find((p) => p.userId === msg.senderId)
+                        ?.photo || "/default-photo.png"
                     }
-                    alt="person"
+                    alt="User"
                     width={30}
                     height={30}
                   />
                 </OtherIcon>
               )}
-
-              <div
-                style={{ flexDirection: "column", gap: "2px", display: "flex" }}
-              >
-                {/* 상대방 메시지일 경우 이름 표시 */}
-                {!isCurrentUser && (
-                  <NameText>{msg.senderName || msg.senderId}</NameText>
-                )}
-
-                <div
-                  style={{ flexDirection: "row", gap: "5px", display: "flex" }}
-                >
-                  {isCurrentUser ? (
-                    <>
-                      <TimeText>
-                        {new Date(msg.timestamp).toLocaleTimeString("en-US", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: true,
-                        })}
-                      </TimeText>
-                      <TextContainer role="user">{msg.content}</TextContainer>
-                    </>
-                  ) : (
-                    <>
-                      <TextContainer role="other">{msg.content}</TextContainer>
-                      <TimeText>
-                        {new Date(msg.timestamp).toLocaleTimeString("en-US", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: true,
-                        })}
-                      </TimeText>
-                    </>
-                  )}
-                </div>
-              </div>
+              <TextContainer role={isCurrentUser ? "user" : "other"}>
+                {msg.content}
+              </TextContainer>
+              <TimeText>
+                {new Date(msg.timestamp).toLocaleTimeString()}
+              </TimeText>
             </MessageContainer>
           );
         })}
       </ChatAreaContainer>
-      {/* 입력 영역 */}
       <InputArea>
         <div style={{ width: "80%", display: "flex", background: "#d9d9d9" }}>
           <StyledTextField
@@ -299,10 +195,10 @@ export default function ChatComponent() {
             variant="standard"
             value={input}
             onChange={handleInputChange}
-            onKeyDown={handleSendMessage}
-            onCompositionStart={handleCompositionStart}
-            onCompositionEnd={handleCompositionEnd}
-            placeholder="대화를 나눠보세요..."
+            onKeyDown={handleInputKeyDown}
+            placeholder="Type a message..."
+            onCompositionStart={() => setIsComposing(true)}
+            onCompositionEnd={() => setIsComposing(false)}
           />
         </div>
       </InputArea>
@@ -332,12 +228,13 @@ const InputArea = styled.div`
   justify-content: center;
   color: #302d2d;
   background-color: #d9d9d9;
+  border: 1px solid blue;
 `;
 
 const StyledTextField = styled(TextField)`
   width: 100%;
   margin-bottom: 5px;
-  background-color: #d9d9d9 !important; /* 배경색 */
+  border: 1px solid red;
 
   .MuiInputBase-root {
     background-color: #d9d9d9; /* 입력 영역의 배경색 */
@@ -389,6 +286,7 @@ const MessageContainer = styled.div<{ role: string }>`
   max-width: 100%;
   align-items: flex-start;
   margin-bottom: 10px;
+  width: 100%;
 `;
 
 const ChatAreaContainer = styled.div`

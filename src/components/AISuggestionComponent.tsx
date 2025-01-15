@@ -34,45 +34,49 @@ interface Participant {
 
 // 📌 **AI 피드백 컴포넌트**
 export default function AISuggestionComponent() {
-    const router = useRouter();
-    const [chatRoomId, setChatRoomId] = useState<string | null>(null);
-    const [aiFeedback, setAiFeedback] = useState<string>("AI 피드백을 불러오는 중...");
+  const router = useRouter();
+  const [chatRoomId, setChatRoomId] = useState<string | null>(null);
+  const [aiFeedback, setAiFeedback] =
+    useState<string>("AI 피드백을 불러오는 중...");
 
-    // ✅ URL에서 chatRoomId 가져오기
-    useEffect(() => {
-        const currentPath = window.location.pathname;
-        const id = currentPath.split("/").pop();
-        if (id) {
-            setChatRoomId(id);
-        }
-    }, []);
+  // ✅ URL에서 chatRoomId 가져오기
+  useEffect(() => {
+    const currentPath = window.location.pathname;
+    const id = currentPath.split("/").pop();
+    if (id) {
+      setChatRoomId(id);
+    }
+  }, []);
 
-    // ✅ AI 피드백 가져오기 (5개 메시지마다)
-    useEffect(() => {
-        const fetchAiFeedback = async () => {
-            if (!chatRoomId) return;
-            console.log("✅ chatRoomId:", chatRoomId);
-            try {
-                const response = await fetch(`http://localhost:5000/api/chatrooms/ai-feedback`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ chatRoomId }) // chatRoomId를 백엔드에 전달
-                });
+  // ✅ AI 피드백 가져오기 (5개 메시지마다)
+  useEffect(() => {
+    const fetchAiFeedback = async () => {
+      if (!chatRoomId) return;
+      console.log("✅ chatRoomId:", chatRoomId);
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/chatrooms/ai-feedback`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ chatRoomId }), // chatRoomId를 백엔드에 전달
+          }
+        );
 
-                if (!response.ok) throw new Error("AI 피드백 요청 실패");
+        if (!response.ok) throw new Error("AI 피드백 요청 실패");
 
-                const data = await response.json();
-                setAiFeedback(data.feedback); // 피드백 업데이트
-            } catch (error) {
-                console.error("AI 피드백 로딩 실패:", error);
-                setAiFeedback("AI 피드백을 불러올 수 없습니다.");
-            }
-        };
+        const data = await response.json();
+        setAiFeedback(data.feedback); // 피드백 업데이트
+      } catch (error) {
+        console.error("AI 피드백 로딩 실패:", error);
+        setAiFeedback("AI 피드백을 불러올 수 없습니다.");
+      }
+    };
 
-        fetchAiFeedback();
-    }, [chatRoomId]);
+    fetchAiFeedback();
+  }, [chatRoomId]);
   return (
     <ChatContainer>
       <FeedbackText>{aiFeedback}</FeedbackText>
@@ -112,10 +116,10 @@ const ChatContainer = styled.div`
 `;
 
 const FeedbackText = styled.div`
-    position: absolute;
-    top: 20%; /* 이미지를 기준으로 위치 조정 */
-    left: 50%;
-    transform: translateX(-50%);
-    color: black;
-    font-size: 16px;
+  position: absolute;
+  top: 20%; /* 이미지를 기준으로 위치 조정 */
+  left: 50%;
+  transform: translateX(-50%);
+  color: black;
+  font-size: 16px;
 `;
