@@ -1,65 +1,44 @@
 [
   {
-    "question": "당신의 심장을 두근거리게 하는 달콤함은?",
+    "question": "당신의 그(그녀)의 볼에 머리카락이 붙어있다. 어떡할까?",
     "choices": [
-      { "text": "초콜릿 폭포", "personality": "세심한" },
-      { "text": "사탕 무지개", "personality": "귀여운" }
+      { "text": "떼준다.", "personality": "세심한" },
+      { "text": "놀린다.", "personality": "귀여운" }
     ]
   },
   {
-    "question": "하루 종일 친구로 함께할 동물은?",
+    "question": "길냥이에게 간택을 당했다. 하지만 당신은 이미 갱쥐를 키운다. 데려올까 말까?",
     "choices": [
-      { "text": "쓰다듬을 때 골골거리는 고양이", "personality": "다정한" },
-      { "text": "꼬리를 흔들며 반겨주는 강아지", "personality": "친절한" }
+      { "text": "울갱쥐를 위해 데려오지 않는다.", "personality": "다정한" },
+      { "text": "불쌍한 냥이를 당장 데려온다.", "personality": "친절한" }
     ]
   },
   {
-    "question": "내 마음을 설레게 하는 계절은?",
+    "question": "오늘은 크리스마스 이브이다. 어떡할까?",
     "choices": [
-      { "text": "여름 해변에서 수박 먹기", "personality": "외향적인" },
-      { "text": "겨울 눈 속에서 핫초코 마시기", "personality": "내향적인" }
+      { "text": "잠들고 25일에 일어난다.", "personality": "외향적인" },
+      { "text": "잠들고 26일에 일어난다.", "personality": "내향적인" }
     ]
   },
   {
     "question": "아침을 깨우는 최고의 음료는?",
     "choices": [
-      { "text": "커피의 깊은 향", "personality": "어른스러운" },
-      { "text": "차의 은은한 향기", "personality": "세심한" }
-    ]
-  },
-  {
-    "question": "영화 속 주인공이 된다면?",
-    "choices": [
-      { "text": "액션 히어로 영화", "personality": "외향적인" },
-      { "text": "마법의 책을 읽는 판타지 소설", "personality": "내향적인" }
-    ]
-  },
-  {
-    "question": "마음이 평온해지는 휴가지는?",
-    "choices": [
-      { "text": "푸른 산 속 오두막", "personality": "과묵한" },
-      { "text": "끝없이 펼쳐진 바다", "personality": "세심한" }
-    ]
-  },
-  {
-    "question": "하루를 더 잘 보내는 방법은?",
-    "choices": [
-      { "text": "아침 일찍 일어나 에너지 가득!", "personality": "어른스러운" },
-      { "text": "늦은 밤, 고요 속 집중 타임!", "personality": "과묵한" }
+      { "text": "르왁커피", "personality": "어른스러운" },
+      { "text": "메가커피", "personality": "세심한" }
     ]
   },
   {
     "question": "평생 살아야 한다면 어디?",
     "choices": [
-      { "text": "반짝이는 야경의 대도시", "personality": "외향적인" },
-      { "text": "별빛 쏟아지는 한적한 시골", "personality": "내향적인" }
+      { "text": "n1실습실", "personality": "외향적인" },
+      { "text": "실습실", "personality": "내향적인" }
     ]
   },
   {
     "question": "금요일 밤 파티 메뉴는?",
     "choices": [
-      { "text": "치즈 듬뿍 피자", "personality": "귀여운" },
-      { "text": "육즙 터지는 햄버거", "personality": "친절한" }
+      { "text": "마라탕", "personality": "귀여운" },
+      { "text": "직접 요리한 ", "personality": "친절한" }
     ]
   },
   {
