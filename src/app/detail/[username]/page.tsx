@@ -14,7 +14,6 @@ import { useSearchParams } from "next/navigation";
 import { ObjectId } from "bson";
 import { usePathname } from "next/navigation";
 
-
 interface ProfileDetailsProps {
   username: string;
   photo: string;
@@ -23,6 +22,7 @@ interface ProfileDetailsProps {
   intro: string;
   ideal: string;
   rating: number;
+  onClick?: () => void;
 }
 
 interface OthersReviewProps {
@@ -34,16 +34,7 @@ interface OthersReviewProps {
 }
 
 export default function Detail() {
-  // const router = useRouter();
-  // const [profile, setProfile] = useState<ProfileDetailsProps>({
-  //   username: "",
-  //   photo: "",
-  //   status: "",
-  //   similarity: 0,
-  //   intro: "",
-  //   ideal: "",
-  //   rating: 0,
-  // });
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [reviews, setReviews] = useState<OthersReviewProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -78,11 +69,19 @@ export default function Detail() {
       }
       setIsLoading(true);
       try {
+        //
         const decode_userId = decodeURIComponent(encode_userId);
         console.log("decode_userId:", decode_userId);
 
-        const res = await fetch(`http://localhost:5000/auth/showuserprofile/${decode_userId}`);
+        // 상대 정보 가져오기
+        const res = await fetch(
+          `http://localhost:5000/auth/showuserprofile/${decode_userId}`
+        );
+        // 상대 리뷰 정보 가져오기
         const res2 = await fetch("/dummy/review_data.json");
+        /*const res2 = await fetch(
+          `http://localhost:5000/api/chatrooms/user/${decode_userId}`
+        );*/
         if (!res.ok) throw new Error("유저 정보를 불러올 수 없습니다.");
 
         const data = await res.json();
@@ -90,7 +89,6 @@ export default function Detail() {
 
         setProfile(data);
         setReviews(data2);
-
       } catch (error) {
         setError("데이터 로딩 중 오류가 발생했습니다.");
       } finally {
@@ -100,6 +98,121 @@ export default function Detail() {
 
     fetchProfile();
   }, [encode_userId]);
+
+  // (2) "대화 시작하기" 클릭 -> 채팅방 생성 API 호출
+  /*
+  const handleStartChat = async () => {
+    try {
+      // (1) 사용자 정보 가져오기
+      const userRes = await fetch("http://localhost:5000/auth/userprofile", {
+        credentials: "include", // 쿠키 인증 포함
+      });
+
+      if (!userRes.ok) {
+        throw new Error(`사용자 정보 요청 실패: ${userRes.status}`);
+      }
+
+      const userData = await userRes.json();
+      console.log("Fetched user data:", userData);
+
+      const currentUserId = userData.userId; // 서버에서 받은 사용자 ID
+
+      if (!encode_userId) {
+        alert("대상 사용자 ID가 없습니다.");
+        return;
+      }
+
+      // (2) 채팅방 생성 요청
+      const chatRes = await fetch(
+        "http://localhost:5000/api/chatrooms/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            currentUserId,
+            otherUserId: encode_userId,
+          }),
+        }
+      );
+
+      if (!chatRes.ok) {
+        const errorData = await chatRes.json();
+        alert(`채팅방 생성 오류: ${errorData.message}`);
+        return;
+      }
+
+      const { chatRoom } = await chatRes.json();
+      const chatRoomId = chatRoom.chatRoomId;
+
+      console.log("Created chat room:", chatRoom);
+
+      // (3) 채팅방 페이지로 이동
+      router.push(`/chat/${chatRoomId}`);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Error:", error.message); // 안전하게 message에 접근
+        alert(`오류 발생: ${error.message}`);
+      } else {
+        console.error("Unknown error:", error);
+      }
+    }
+  };
+  */
+
+  const handleStartChat = async () => {
+    try {
+      // (1) 내 정보 가져오기
+      const userRes = await fetch("http://localhost:5000/auth/userprofile", {
+        credentials: "include",
+      });
+
+      if (!userRes.ok) {
+        throw new Error(`사용자 정보 요청 실패: ${userRes.status}`);
+      }
+
+      const userData = await userRes.json();
+      const currentUserId = userData.userId;
+
+      // ★ (프런트에서 이미 가져온 profile의 username이 있다고 가정)
+      //    없다면 fetchProfile()에서 setProfile(...)로 저장된 값을 가져오면 됨
+      const otherUserName = profile?.username || "기본닉네임";
+
+      // (2) 채팅방 생성 요청
+      const chatRes = await fetch(
+        "http://localhost:5000/api/chatrooms/create",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            currentUserId,
+            otherUserId: encode_userId,
+            otherUserName, // ★ 추가
+          }),
+        }
+      );
+
+      if (!chatRes.ok) {
+        const errorData = await chatRes.json();
+        alert(`채팅방 생성 오류: ${errorData.message}`);
+        return;
+      }
+
+      const { chatRoom } = await chatRes.json();
+      const chatRoomId = chatRoom.chatRoomId;
+
+      // (3) 채팅방 페이지로 이동
+      router.push(`/chat/${chatRoomId}`);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Error:", error.message); // 안전하게 message에 접근
+        alert(`오류 발생: ${error.message}`);
+      } else {
+        console.error("Unknown error:", error);
+      }
+    }
+  };
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -136,7 +249,8 @@ export default function Detail() {
                 intro={profile?.intro ?? "소개 정보 없음"}
                 ideal={profile?.ideal ?? "이상형 정보 없음"}
                 rating={profile?.rating ?? 0}
-            />
+                onClick={handleStartChat}
+              />
               {hoverPosition && (
                 <HoverText
                   style={{

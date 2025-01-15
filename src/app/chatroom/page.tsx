@@ -74,8 +74,30 @@ export default function ChatRoom() {
     router.push(`/chat/${id}`); // Navigate to a specific chat room
   };
 
-  if (!chatRooms.length) {
-    return <div>Loading...</div>;
+  if (!chatRooms || !chatRooms.length) {
+    return (
+      <Wrapper>
+        <TopBarWrapper>
+          <TopBar />
+        </TopBarWrapper>
+        <ContentWrapper>
+          <div
+            style={{
+              display: "flex",
+              width: "100%",
+              height: "100%",
+              border: "1px solid blue",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <NoChatRooms>
+              현재 채팅방이 없습니다. <br /> 채팅을 시작해보세요.
+            </NoChatRooms>
+          </div>
+        </ContentWrapper>
+      </Wrapper>
+    );
   }
 
   return (
@@ -177,4 +199,12 @@ const HoverText = styled.div`
   font-size: 14px;
   white-space: nowrap;
   z-index: 1000;
+`;
+
+const NoChatRooms = styled.div`
+  width: 100%;
+  text-align: center;
+  font-size: 18px;
+  color: #000000;
+  margin-top: 50px;
 `;

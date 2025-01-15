@@ -1,10 +1,9 @@
 "use client";
+
 import { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import io, { Socket } from "socket.io-client";
-import { useRouter } from "next/router"; // Next.js Router 가져오기
-import { usePathname } from "next/navigation"; // Next.js navigation 훅
-
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import TextField from "@mui/material/TextField";
 
@@ -43,8 +42,6 @@ export default function ChatComponent() {
         });
         if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
         const data = await res.json();
-        console.log("Fetched user data:", data);
-
         setCurrentUser({
           userId: data.userId,
           username: data.username,
@@ -61,7 +58,6 @@ export default function ChatComponent() {
 
         socket.on("receive message", (msg: Message) => {
           setMessages((prev) => [...prev, msg]);
-          console.log("New message received:", msg);
         });
 
         return () => socket.disconnect();
@@ -74,63 +70,74 @@ export default function ChatComponent() {
   }, []);
 
   useEffect(() => {
-    console.log("Updated current user data:", currentUser);
-  }, [currentUser]);
+    if (!currentChatRoomId) return;
 
-  // 메시지 전송 함수
-  const handleSendMessage = async () => {
-    if (!input.trim() || !currentUser || !socketRef.current) return;
-    if (!currentChatRoomId) {
-      console.warn("No chatroom ID found");
-      return; // chatRoomId가 없는 상황이면 전송 로직 중단
-    }
-
-    if (socketRef.current && currentUser) {
-      const message: Message = {
-        chatroomId: currentChatRoomId,
-        messageId: `msg_${Date.now()}`,
-        senderId: currentUser.userId,
-        senderName: currentUser.username,
-        content: input,
-        timestamp: new Date().toISOString(),
-      };
-
-      console.log("Message:", message);
-      socketRef.current.emit("sendMessage", message);
-
-      // 2. 백엔드 API를 통해 DB에 메시지 저장
+    const fetchMessages = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:5000/chatother/messages`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              user: currentUser.userId,
-              message: input,
-              chatroomId: currentChatRoomId, // string
-            }),
-          }
+        const messagesRes = await fetch(
+          `http://localhost:5000/chatother/${currentChatRoomId}/messages`,
+          { credentials: "include" }
         );
 
-        if (!response.ok) {
-          throw new Error(`Failed to save message: ${response.status}`);
+        if (!messagesRes.ok) {
+          throw new Error(
+            `Failed to fetch messages for chatRoomId ${currentChatRoomId}: ${messagesRes.status}`
+          );
         }
 
-        const savedMessage = await response.json();
-        console.log("Message saved to DB:", savedMessage);
+        const existingMessages = await messagesRes.json();
+        setMessages(existingMessages);
       } catch (error) {
-        console.error("Failed to save message to DB:", error);
+        console.error("Error fetching messages:", error);
       }
-      setMessages((prev) => [...prev, message]);
-      setInput("");
+    };
 
-      console.log("Message sent:", message);
-    } else {
-      console.warn("socketRef.current or currentUser is not initialized");
+    fetchMessages();
+  }, [currentChatRoomId]);
+
+  const handleSendMessage = async () => {
+    if (!input.trim() || !currentUser || !socketRef.current) return;
+    if (!currentChatRoomId) return;
+
+    const message: Message = {
+      chatroomId: currentChatRoomId,
+      messageId: `msg_${Date.now()}`,
+      senderId: currentUser.userId,
+      senderName: currentUser.username,
+      content: input,
+      timestamp: new Date().toISOString(),
+    };
+
+    socketRef.current.emit("sendMessage", message);
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/chatother/${currentChatRoomId}/messages`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user: currentUser.userId,
+            message: input,
+            chatroomId: currentChatRoomId,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to save message: ${response.status}`);
+      }
+
+      const savedMessage = await response.json();
+      console.log("Message saved to DB:", savedMessage);
+    } catch (error) {
+      console.error("Failed to save message to DB:", error);
     }
+
+    setMessages((prev) => [...prev, message]);
+    setInput("");
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -138,11 +145,10 @@ export default function ChatComponent() {
   };
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (isComposing) return; // IME 조합 중에는 아무 작업도 하지 않음
+    if (isComposing) return;
     if (e.key === "Enter" && !e.shiftKey) {
-      // 엔터키 단독으로 눌렀을 때만 전송
-      e.preventDefault(); // 기본 엔터키 동작 방지
-      handleSendMessage(); // 메시지 전송
+      e.preventDefault();
+      handleSendMessage();
     }
   };
 
@@ -151,13 +157,6 @@ export default function ChatComponent() {
       <ChatAreaContainer>
         {messages.map((msg) => {
           const isCurrentUser = currentUser?.userId === msg.senderId;
-
-          console.log(
-            "Rendering message:",
-            msg,
-            "isCurrentUser:",
-            isCurrentUser
-          );
 
           return (
             <MessageContainer
