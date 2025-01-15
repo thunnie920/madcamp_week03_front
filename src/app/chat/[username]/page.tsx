@@ -52,7 +52,7 @@ const ContentWrapper = styled.div`
 `;
 
 const ChatContainer = styled.div`
-  width: 70%; /* 너비 비율 설정 */
+  width: 80%; /* 너비 비율 설정 */
   display: flex;
   height: 100%;
   flex-direction: column;
@@ -61,7 +61,7 @@ const ChatContainer = styled.div`
 `;
 
 const AISuggestionContainer = styled.div`
-  width: 30%; /* 너비 비율 설정 */
+  width: 20%; /* 너비 비율 설정 */
   height: 100%;
   display: flex;
   flex-direction: column;

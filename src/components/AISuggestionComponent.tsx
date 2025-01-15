@@ -117,7 +117,7 @@ const ChatContainer = styled.div`
 
 const FeedbackText = styled.div`
   position: absolute;
-  top: 20%; /* 이미지를 기준으로 위치 조정 */
+  top: 5%; /* 이미지를 기준으로 위치 조정 */
   left: 50%;
   transform: translateX(-50%);
   color: black;
