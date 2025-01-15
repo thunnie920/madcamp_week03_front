@@ -34,7 +34,7 @@ interface Participant {
 
 // 📌 **AI 피드백 컴포넌트**
 export default function AISuggestionComponent() {
-    const router = useRouter();
+  /*const router = useRouter();
     const [chatRoomId, setChatRoomId] = useState<string | null>(null);
     const [aiFeedback, setAiFeedback] = useState<string>("AI 피드백을 불러오는 중...");
 
@@ -71,12 +71,12 @@ export default function AISuggestionComponent() {
         };
 
         fetchAiFeedback();
-    }, [chatRoomId]);
+    }, [chatRoomId]);*/
   return (
     <ChatContainer>
       <ImageContainer>
         <Image src={AIImage} alt="인공지능" />
-        <FeedbackText>{aiFeedback}</FeedbackText>
+        <FeedbackText>어쩌구</FeedbackText>
       </ImageContainer>
     </ChatContainer>
   );
@@ -111,14 +111,14 @@ const ChatContainer = styled.div`
 `;
 
 const FeedbackText = styled.div`
-    position: absolute;
-    bottom: 20%; /* 이미지를 기준으로 위치 조정 */
-    left: 50%;
-    transform: translateX(-50%);
-    color: white;
-    font-weight: bold;
-    font-size: 18px;
-    background: rgba(0, 0, 0, 0.6); /* 반투명 배경 */
-    padding: 10px;
-    border-radius: 8px;
+  position: absolute;
+  bottom: 20%; /* 이미지를 기준으로 위치 조정 */
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  background: rgba(0, 0, 0, 0.6); /* 반투명 배경 */
+  padding: 10px;
+  border-radius: 8px;
 `;

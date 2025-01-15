@@ -10,17 +10,16 @@ import SideBar from "@/src/components/SideBarComponent";
 import ChatRoomCard from "@/src/components/ChatRoomCardComponent";
 import { ObjectId } from "bson";
 
-
 // ✅ chatRoomData 타입 정의
 interface ChatRoomProps {
-    userId: String;
-    chatRoomArray: {
-        username: string;
-        id: string;
-        status: string;
-        photo: string;
-        lastchatdate: number;
-    }[];
+  userId: String;
+  chatRoomArray: {
+    username: string;
+    id: string;
+    status: string;
+    photo: string;
+    lastchatdate: number;
+  }[];
 }
 
 export default function ChatRoom() {
@@ -32,35 +31,69 @@ export default function ChatRoom() {
   } | null>(null);
   const [userId, setUserId] = useState<ObjectId | null>(null);
   const [chatRooms, setChatRooms] = useState<ChatRoomProps[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // ✅ (1) 로그인된 사용자 ID 가져오기
+  // (1) 로그인된 사용자 ID 가져오기
   useEffect(() => {
-      const fetchChatRooms = async () => {
-        try {
-          console.log("✅ Fetching chat rooms...");
-          //const token = localStorage.getItem("authToken");
-              const response = await fetch("http://localhost:5000/api/chatrooms/user", {
-                  method: "GET",
-                  credentials: "include"
-              });
+    const fetchChatRooms = async () => {
+      setLoading(true); // 요청 시작 시 로딩 상태 설정
+      setError(null); // 에러 상태 초기화
 
-              if (!response.ok) {
-                  throw new Error("채팅방 데이터를 불러오지 못했습니다.");
-              }
-
-              const data: ChatRoomProps[] = await response.json();
-              setChatRooms(data);
-          } catch (error) {
-              console.error("Error fetching chat rooms:", error);
+      try {
+        console.log("✅ Fetching chat rooms...");
+        //const token = localStorage.getItem("authToken");
+        const response = await fetch(
+          "http://localhost:5000/api/chatrooms/user",
+          {
+            method: "GET",
+            credentials: "include",
           }
-      };
-      fetchChatRooms();
+        );
+
+        if (!response.ok) {
+          console.log(`Status: ${response.status}`);
+          const errorData = await response.text();
+          console.error("Response error:", errorData);
+          throw new Error("참여 중인 채팅방이 없습니다.");
+        }
+
+        const data: ChatRoomProps[] = await response.json();
+        console.log("Fetched data:", data);
+        setChatRooms(data);
+        if (data.length === 0) {
+          setError("참여 중인 채팅방이 없습니다."); // 빈 데이터 처리
+        } else {
+          setChatRooms(data); // 데이터가 있는 경우 상태 업데이트
+        }
+      } catch (error: any) {
+        setError(error.message || "서버와의 통신 중 오류가 발생했습니다.");
+      } finally {
+        setLoading(false); // 요청 완료 후 로딩 상태 해제
+      }
+    };
+    fetchChatRooms();
   }, []);
 
-  if (chatRooms.length === 0) {
-    return <div>참여 중인 채팅방이 없습니다.</div>;
-  } 
+  if (loading) {
+    return <div>Loading...</div>; // 로딩 메시지 표시
+  }
 
+  if (error) {
+    return (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {error}
+      </div>
+    ); // 에러 메시지 표시
+  }
 
   const handleMouseMove = (event: React.MouseEvent) => {
     setHoverPosition({ x: event.clientX, y: event.clientY });
@@ -73,23 +106,6 @@ export default function ChatRoom() {
   const handleCardClick = (id: string) => {
     router.push(`/chat/${id}`); // Navigate to a specific chat room
   };
-
-  // useEffect(() => {
-  //   const fetchProfiles = async () => {
-  //     try {
-  //       const res = await fetch("/dummy/chatroom_data.json");
-  //       if (!res.ok) {
-  //         throw new Error("Failed to fetch profiles");
-  //       }
-  //       const data: ChatRoomProps[] = await res.json();
-  //       setProfiles(data);
-  //     } catch (error) {
-  //       console.error("Error fetching profiles:", error);
-  //     }
-  //   };
-
-  //   fetchProfiles();
-  // }, []);
 
   if (!chatRooms.length) {
     return <div>Loading...</div>;
@@ -108,31 +124,31 @@ export default function ChatRoom() {
           <ProfileContainer>
             {chatRooms.map((room) =>
               room.chatRoomArray.map((profile) => (
-              <CardWrapper
-                key={profile.id}
-                onMouseMove={handleMouseMove}
-                onMouseLeave={handleMouseLeave}
-              >
-                <ChatRoomCard
-                  username={profile.username}
-                  photo={profile.photo}
-                  id={profile.id}
-                  status={profile.status}
-                  lastchatdate={profile.lastchatdate}
-                  onClick={() => handleCardClick(profile.id)}
-                />
-                {hoverPosition && (
-                  <HoverText
-                    style={{
-                      top: hoverPosition.y + 10,
-                      left: hoverPosition.x + 10,
-                    }}
-                  >
-                    채팅 시작하기
-                  </HoverText>
-                )}
-              </CardWrapper>
-            ))
+                <CardWrapper
+                  key={profile.id}
+                  onMouseMove={handleMouseMove}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  <ChatRoomCard
+                    username={profile.username}
+                    photo={profile.photo}
+                    id={profile.id}
+                    status={profile.status}
+                    lastchatdate={profile.lastchatdate}
+                    onClick={() => handleCardClick(profile.id)}
+                  />
+                  {hoverPosition && (
+                    <HoverText
+                      style={{
+                        top: hoverPosition.y + 10,
+                        left: hoverPosition.x + 10,
+                      }}
+                    >
+                      채팅 시작하기
+                    </HoverText>
+                  )}
+                </CardWrapper>
+              ))
             )}
           </ProfileContainer>
         </MainContent>
